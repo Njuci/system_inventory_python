@@ -32,5 +32,4 @@ class Connexion:
     def get_curseur(self):
         return self.curseur    
     def close(self):
-        self.db.close()
         self.curseur.close()
