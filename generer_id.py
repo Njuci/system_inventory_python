@@ -21,4 +21,28 @@ def generate_key(prefix,long,id):
 
   return generated_key
 
-#Comment
+#Comment recuperer le nombre d'entrees dans une table;
+def recuperer_dernier(nom_table,prefix,long,curseur):
+    try:
+        curseur.execute(f'select count(*) from {nom_table}')
+        resultat=curseur.fetchall()
+        id=resultat[0][0]+1
+        cle=generate_key(prefix,long,id)
+        return cle
+    except Exception as e:
+        pass        
+        
+        
+        
+        
+        
+        
+    except Exception as e:
+        resultat=[]
+        
+    
+    
+    
+    
+    pass
+    
