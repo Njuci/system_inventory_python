@@ -24,6 +24,10 @@ def generate_key(prefix,long,id):
 #Comment recuperer le nombre d'entrees dans une table;
 def recuperer_dernier(nom_table,prefix,long,curseur):
     try:
+        #comment gernerer une clé pour un nouvel enregistrement dans une table donnée en tenant compte du nombre d'enregistrement déjà existant dans la table meme si quelques enregistrements ont été supprimés
+        
+        
+        
         curseur.execute(f'select count(*) from {nom_table}')
         resultat=curseur.fetchall()
         id=resultat[0][0]+1
