@@ -14,7 +14,7 @@ class Client_back:
     #function to add a client
     def add_client(self,curseur):
         try:
-            curseur.execute('INSERT INTO client(nom_client,adresse_client) VALUES(%s,%s', (self.nom_client,self.adresse_client))
+            curseur.execute('INSERT INTO tb_client(nom_client,adresse_client) VALUES(%s,%s)', (self.nom_client,self.adresse_client))
             
             return True
         except Exception as e:
@@ -24,7 +24,7 @@ class Client_back:
     #function update a informations 
     def update_client(self,curseur,id_client):
         try:
-            curseur.execute('UPDATE client SET nom_client=%s,adresse_client=%s WHERE id_client=%s',(self.nom_client,self.adresse_client,id_client))
+            curseur.execute('UPDATE tb_client SET nom_client=%s,adresse_client=%s WHERE id_client=%s',(self.nom_client,self.adresse_client,id_client))
             return True
         except Exception as e:
             messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
@@ -34,21 +34,21 @@ class Client_back:
     #function TO del 
     def del_client(self,curseur,id_client):
         try:
-            curseur.execute('DELETE FROM client WHERE id_client=%s',(id_client))
+            curseur.execute('DELETE FROM tb_client WHERE id_client=%s',(id_client))
             return True
         except Exception as e:
-            messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
+            messagebox.showerror('Erreur',f'Erreur lors de la suppression du client  à la base de données : {e}')
             curseur.rollback()
             return False
     #get_client
     def get_all_client(self,curseur):
         try:
-            curseur.execute('SELECT * FROM client')
+            curseur.execute('SELECT * FROM tb_client')
             return True,curseur.fetchall()
         
         except Exception as e:
             messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
-            curseur.rollback()
+          
             return False,[]
     #function  to search one or many cloent
     def search_client (self,curseur,critere):
@@ -61,4 +61,4 @@ class Client_back:
         except Exception as e:
             resultat=[]
             messagebox.showerror('Erreur',f'Erreur lors de la recuperation des données  à la base de données : {e}')
-            
+            return resultat
