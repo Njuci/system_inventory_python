@@ -1,0 +1,64 @@
+"""_summary_
+se basant de bd_invent{python .sql}
+cree une classe client_back qui me permettra de  reagir avec avec labd
+en utilisant mysqlconnector python
+
+    """
+from tkinter import messagebox
+
+
+class Client_back:
+    def __init__(self,nom_cli,adresse_cli):
+        self.nom_client = nom_cli
+        self.adresse_client = adresse_cli
+    #function to add a client
+    def add_client(self,curseur):
+        try:
+            curseur.execute('INSERT INTO client(nom_client,adresse_client) VALUES(%s,%s', (self.nom_client,self.adresse_client))
+            
+            return True
+        except Exception as e:
+            messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
+            curseur.rollback()
+            return False
+    #function update a informations 
+    def update_client(self,curseur,id_client):
+        try:
+            curseur.execute('UPDATE client SET nom_client=%s,adresse_client=%s WHERE id_client=%s',(self.nom_client,self.adresse_client,id_client))
+            return True
+        except Exception as e:
+            messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
+            curseur.rollback()
+            return False
+        
+    #function TO del 
+    def del_client(self,curseur,id_client):
+        try:
+            curseur.execute('DELETE FROM client WHERE id_client=%s',(id_client))
+            return True
+        except Exception as e:
+            messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
+            curseur.rollback()
+            return False
+    #get_client
+    def get_all_client(self,curseur):
+        try:
+            curseur.execute('SELECT * FROM client')
+            return True,curseur.fetchall()
+        
+        except Exception as e:
+            messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
+            curseur.rollback()
+            return False,[]
+    #function  to search one or many cloent
+    def search_client (self,curseur,critere):
+        resultat=[]
+        try:
+            
+            curseur.execute(f'select *from tb_client {critere}')
+            resultat=curseur.fetchall()
+            return resultat
+        except Exception as e:
+            resultat=[]
+            messagebox.showerror('Erreur',f'Erreur lors de la recuperation des données  à la base de données : {e}')
+            
