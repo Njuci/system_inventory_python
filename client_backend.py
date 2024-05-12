@@ -14,7 +14,7 @@ class Client_back:
     #function to add a client
     def add_client(self,curseur):
         try:
-            curseur.execute('INSERT INTO tb_client(nom_client,adresse_client) VALUES(%s,%s)', (self.nom_client,self.adresse_client))
+            curseur.execute('INSERT INTO tb_client(nom_cli,adresse) VALUES(%s,%s)', (self.nom_client,self.adresse_client))
             
             return True
         except Exception as e:
@@ -24,7 +24,7 @@ class Client_back:
     #function update a informations 
     def update_client(self,curseur,id_client):
         try:
-            curseur.execute('UPDATE tb_client SET nom_client=%s,adresse_client=%s WHERE id_client=%s',(self.nom_client,self.adresse_client,id_client))
+            curseur.execute('UPDATE tb_client SET nom_cli=%s,adresse=%s WHERE id_client=%s',(self.nom_client,self.adresse_client,id_client))
             return True
         except Exception as e:
             messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')

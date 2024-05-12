@@ -6,11 +6,11 @@ class Connexion:
     def __init__(self,user,password):
         self.user=user
         self.password=password
-
-        
+        self.db=None
+        self.curseur=None
         try:
             self.db = mysql.connector.connect(
-            host = '127.0.0.1',
+            host = 'localhost',
             user = self.user,
             password = self.password,
             database ='gest_stock_invent',
@@ -19,6 +19,7 @@ class Connexion:
             self.curseur=self.db.cursor()
         except Exception as e:
             self.db=None
+            self.curseur=None
             showerror("Erreur",f'Erreur de connexion à la base de données motif:{e}')
             
             
