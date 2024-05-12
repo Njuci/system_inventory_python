@@ -57,25 +57,191 @@ create table tb_vente(
     constraint pk_vente primary key(id_stock,id_facture,id_produit)
     );
 
-CREATE TABLE table_name_client (
+CREATE TABLE table_name_id (
    name_table VARCHAR(255),
    ancienne_cle INT,
    nouvelle_cle INT
 );
-
---create TRIGGER
---
-
 DELIMITER //
 CREATE TRIGGER avant_insertion_client
-AFTER INSERT ON tb_client
+BEFORE INSERT ON tb_client
 FOR EACH ROW
 BEGIN
-    IF NEW.id IS NULL THEN
-        SET NEW.id_client = CONCAT('CLI', LPAD(LAST_INSERT_ID(), 7, '0'));
+    DECLARE variable_name INT DEFAULT 0;
+    DECLARE max_cle INT DEFAULT 0;
+    DECLARE max_nouvelle_cle INT;
+    -- Récupère la plus grande valeur de nouvelle_cle et l'incrémente de 1
+    -- SET @max_nouvelle_cle = (SELECT MAX(nouvelle_cle) FROM table_name_id WHERE name_table = 'tb_client');
+    SET @max_nouvelle_cle = (SELECT MAX(nouvelle_cle) FROM table_name_id WHERE name_table = 'tb_client');
+
+    
+         SET @variable_name = @max_nouvelle_cle + 1;
+    -- Vérifie si variable_name est NULL ou 0, et ajuste la valeur de id_client en conséquence
+    IF @max_nouvelle_cle  IS NULL OR @max_nouvelle_cle  = 0 THEN
+        SET NEW.id_client = CONCAT('CLI', LPAD(1, 7, '0'));
+        SET @variable_name=1;
     ELSE
-        SET NEW.id_client = CONCAT('CLI', LPAD(LAST_INSERT_ID() + 1, 7, '0'));
+        SET NEW.id_client = CONCAT('CLI', LPAD(@variable_name , 7, '0'));
     END IF;
+    
+    
+    
+    
+    INSERT into table_name_id VALUES ('tb_client',@max_nouvelle_cle ,@variable_name );
+END;
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER avant_insertion_poduit
+BEFORE INSERT ON tb_produit
+FOR EACH ROW
+BEGIN
+    DECLARE variable_name INT DEFAULT 0;
+    DECLARE max_cle INT DEFAULT 0;
+    DECLARE max_nouvelle_cle INT;
+    -- Récupère la plus grande valeur de nouvelle_cle et l'incrémente de 1
+    -- SET @max_nouvelle_cle = (SELECT MAX(nouvelle_cle) FROM table_name_id WHERE name_table = 'tb_client');
+    SET @max_nouvelle_cle = (SELECT MAX(nouvelle_cle) FROM table_name_id WHERE name_table = 'tb_produit');
+
+    
+         SET @variable_name = @max_nouvelle_cle + 1;
+    -- Vérifie si variable_name est NULL ou 0, et ajuste la valeur de id_client en conséquence
+    IF @max_nouvelle_cle  IS NULL OR @max_nouvelle_cle  = 0 THEN
+        SET NEW.id_produit = CONCAT('PRO', LPAD(1, 7, '0'));
+        SET @variable_name=1;
+    ELSE
+        SET NEW.id_produit = CONCAT('PRO', LPAD(@variable_name , 7, '0'));
+    END IF;
+    
+    
+    
+    
+    INSERT into table_name_id VALUES ('tb_produit',@max_nouvelle_cle ,@variable_name );
+END;
+//
+DELIMITER ;
+
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER avant_insertion_stock
+BEFORE INSERT ON tb_stock
+FOR EACH ROW
+BEGIN
+    DECLARE variable_name INT DEFAULT 0;
+    DECLARE max_cle INT DEFAULT 0;
+    DECLARE max_nouvelle_cle INT;
+    -- Récupère la plus grande valeur de nouvelle_cle et l'incrémente de 1
+    -- SET @max_nouvelle_cle = (SELECT MAX(nouvelle_cle) FROM table_name_id WHERE name_table = 'tb_client');
+    SET @max_nouvelle_cle = (SELECT MAX(nouvelle_cle) FROM table_name_id WHERE name_table = 'tb_stock');
+
+    
+         SET @variable_name = @max_nouvelle_cle + 1;
+    -- Vérifie si variable_name est NULL ou 0, et ajuste la valeur de id_client en conséquence
+    IF @max_nouvelle_cle  IS NULL OR @max_nouvelle_cle  = 0 THEN
+        SET NEW.id_stock = CONCAT('STO', LPAD(1, 7, '0'));
+        SET @variable_name=1;
+    ELSE
+        SET NEW.id_stock = CONCAT('STO', LPAD(@variable_name , 7, '0'));
+    END IF;
+    
+    
+    
+    
+    INSERT into table_name_id VALUES ('tb_stock',@max_nouvelle_cle ,@variable_name );
+END;
+//
+DELIMITER ;
+
+
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER avant_insertion_pv
+BEFORE INSERT ON tb_prix_vente
+FOR EACH ROW
+BEGIN
+    DECLARE variable_name INT DEFAULT 0;
+    DECLARE max_cle INT DEFAULT 0;
+    DECLARE max_nouvelle_cle INT;
+    -- Récupère la plus grande valeur de nouvelle_cle et l'incrémente de 1
+    -- SET @max_nouvelle_cle = (SELECT MAX(nouvelle_cle) FROM table_name_id WHERE name_table = 'tb_client');
+    SET @max_nouvelle_cle = (SELECT MAX(nouvelle_cle) FROM table_name_id WHERE name_table = 'tb_prix_vente');
+
+    
+         SET @variable_name = @max_nouvelle_cle + 1;
+    -- Vérifie si variable_name est NULL ou 0, et ajuste la valeur de id_client en conséquence
+    IF @max_nouvelle_cle  IS NULL OR @max_nouvelle_cle  = 0 THEN
+        SET NEW.id_pv = CONCAT('PV', LPAD(1, 8, '0'));
+        SET @variable_name=1;
+    ELSE
+        SET NEW.id_pv = CONCAT('PV', LPAD(@variable_name , 8, '0'));
+    END IF;
+    
+    
+    
+    
+    INSERT into table_name_id VALUES ('tb_prix_vente',@max_nouvelle_cle ,@variable_name );
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER avant_insertion_facture
+BEFORE INSERT ON tb_facture
+FOR EACH ROW
+BEGIN
+    DECLARE variable_name INT DEFAULT 0;
+    DECLARE max_cle INT DEFAULT 0;
+    DECLARE max_nouvelle_cle INT;
+    -- Récupère la plus grande valeur de nouvelle_cle et l'incrémente de 1
+    -- SET @max_nouvelle_cle = (SELECT MAX(nouvelle_cle) FROM table_name_id WHERE name_table = 'tb_client');
+    SET @max_nouvelle_cle = (SELECT MAX(nouvelle_cle) FROM table_name_id WHERE name_table = 'tb_facture');
+
+    
+         SET @variable_name = @max_nouvelle_cle + 1;
+    -- Vérifie si variable_name est NULL ou 0, et ajuste la valeur de id_client en conséquence
+    IF @max_nouvelle_cle  IS NULL OR @max_nouvelle_cle  = 0 THEN
+        SET NEW.id_facture = CONCAT('FAC', LPAD(1, 7, '0'));
+        SET @variable_name=1;
+    ELSE
+        SET NEW.id_facture = CONCAT('FAC', LPAD(@variable_name , 7, '0'));
+    END IF;
+    
+    
+    
+    
+    INSERT into table_name_id VALUES ('tb_facture',@max_nouvelle_cle ,@variable_name );
+END;
+//
+DELIMITER ;
+
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER avant_insertion_vente
+BEFORE INSERT ON tb_vente
+FOR EACH ROW
+BEGIN
+    DECLARE variable_name INT DEFAULT 0;
+    DECLARE max_cle INT DEFAULT 0;
+    DECLARE max_nouvelle_cle INT;
+    -- Récupère la plus grande valeur de nouvelle_cle et l'incrémente de 1
+    -- SET @max_nouvelle_cle = (SELECT MAX(nouvelle_cle) FROM table_name_id WHERE name_table = 'tb_client');
+    SET @max_nouvelle_cle = (SELECT MAX(nouvelle_cle) FROM table_name_id WHERE name_table = 'tb_vente');
+
+    
+         SET @variable_name = @max_nouvelle_cle + 1;
+    -- Vérifie si variable_name est NULL ou 0, et ajuste la valeur de id_client en conséquence
+    IF @max_nouvelle_cle  IS NULL OR @max_nouvelle_cle  = 0 THEN
+        SET NEW.id_vente = CONCAT('TBV', LPAD(1, 7, '0'));
+        SET @variable_name=1;
+    ELSE
+        SET NEW.id_vente = CONCAT('TBV', LPAD(@variable_name , 7, '0'));
+    END IF;
+    
+    
+    
+    
+    INSERT into table_name_id VALUES ('tb_vente',@max_nouvelle_cle ,@variable_name );
 END;
 //
 DELIMITER ;
