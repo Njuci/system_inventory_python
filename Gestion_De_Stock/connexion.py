@@ -1,8 +1,9 @@
+import dashboard_Front
 from tkinter import *
 import tkinter as tk
 from tkinter.messagebox import showerror,showwarning
-from gest_stock_back.login_back import Connexion
-
+from login_back import Connexion
+import MenuPrincipale
 
 class Connexion_Frontend:
     def __init__(self):
@@ -29,9 +30,21 @@ class Connexion_Frontend:
         self.mdEnt=Entry(self.form,show='*',relief='flat',font =('Segoe UI',12))
         self.mdEnt.place(relx=0.2,rely=0.4,relwidth=0.5, height=30)
         
-        self.bouton= Button(self.form,bg='#6666b9',text='Connexion',relief='flat', font =('Segoe UI',15),fg='white',command=self.login)
+        self.bouton= Button(self.form,bg='#6666b9',text='Connexion',relief='flat', font =('Segoe UI',15),fg='white',command=self.connect_back)
         self.bouton.place(relx=0.2,rely=0.6,relwidth=0.5, height=50)
         
     def fenetre(self):
         return self.fen
-    def 
+    def connect_back(self):
+        db=Connexion(self.idEnt.get(),self.mdEnt.get())
+        if db.login():
+            
+            Dash=MenuPrincipale.MenuPrincipaleFrontend(db.get_curseur(),db,self.idEnt.get())
+            self.fen.destroy()
+            Dash.fenetre().mainloop()
+        else:
+            showerror("Erreur","Nom d'utilisateur ou mot de passe incorrect")
+    
+            
+        
+    

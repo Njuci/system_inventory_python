@@ -12,12 +12,12 @@ from gestStock_front import GestionStock
 
 class MenuPrincipaleFrontend:
     ver=0
-    def __init__(self,Curseur,con,compte,IDTitu):
+    def __init__(self,Curseur,con,compte):
         self.Curseur=Curseur
         self.fen = Tk()
         self.fen.title("GRACE BUSNESS")
         self.fen.geometry("1200x600")
-        self.fen.resizable(width=False,height=False)
+        self.fen.resizable(width=True,height=True)
         self.compte=compte
         #les instances de la classe
         #Selection de l'annee active

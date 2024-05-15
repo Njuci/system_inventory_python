@@ -1,24 +1,29 @@
 from tkinter import *
 from configuration import InfosApp
+from produit_backend import Product_back
 from fakeData import FakeData
 from tkinter import ttk
+
+from pv_back import Prix_vente_back
 from verificationEntry import EntryVerification
 from tkinter.messagebox import askyesno,showinfo,showwarning
 class GestionArticle :
     def __init__(self,fen,con):
         self.fen = fen
+        self.curseur=con.get_curseur()
         self.configApp=InfosApp
         self.FakeData=FakeData()
         self.couleur=self.configApp.ColeursApp(self)
         self.verification=EntryVerification()
         self.config=self.configApp.Configuration(self)
+        self.id_art=None
 
         self.title_section1 = Label(self.fen, text = "Formulaire article", font = ('Segoe UI bold',14),fg=self.couleur['CouleurTitreText'],bg=self.couleur['Background']).place(x=20, y=20)
         self.title_section1 = Label(self.fen, text = "Les articles disponibles", font = ('Segoe UI bold',14),fg=self.couleur['CouleurTitreText'],bg=self.couleur['Background'])
         self.title_section1.place(relx=0.3, y=20)
 
         #-----------------------Formulaire gestion article -------------------
-        self.FormulaireArticle(['empty'],'')
+        self.FormulaireArticle()
 
         self.RightContener=Frame(self.fen,bg='#ebf4f5')
         self.RightContener.place(relx=0.3, rely=0.1,relwidth=0.68,relheight=0.8)
@@ -28,8 +33,29 @@ class GestionArticle :
 
 
 
-    def FormulaireArticle(self,listeArticles,ValeurArticle):
-        #Formulaire clients
+    def FormulaireArticle(self):
+        ValeurArticle=''
+        #donnee de l'article
+        def remplirDonnee():
+                
+            
+            liste_valeur=[]
+            product=Product_back('')
+            listeArticles=product.get_all_produit(self.curseur)[1]
+            #Formulaire clients
+            for i in listeArticles:
+                liste_valeur.append(i[0]+'|'+i[1])
+            print(liste_valeur)
+            def get_id_art():
+                self.id_art=self.ComboArticle.get().split("|")[0]
+    
+            self.ComboArticle=ttk.Combobox(self.ClientForm, font =('Segoe UI',10))
+            
+            self.ComboArticle.place(relx=0.02,rely=0.55,relwidth=0.9, height=26)
+            self.ComboArticle['values']=liste_valeur
+            self.ComboArticle.bind("<<ComboboxSelected>>",get_id_art())
+            
+
         self.ClientForm=Frame(self.fen,bg='white')
         self.ClientForm.place(x=20, rely=0.1,relwidth=0.25,relheight=0.8)
         self.title_section1 = Label(self.ClientForm, text = "AJOUT ET MODIFICATION ARTICLE", font = ('Segoe UI',10),fg=self.couleur['CouleurTitreText'],bg="white").place(relx=0.15, rely=0.03)
@@ -56,10 +82,8 @@ class GestionArticle :
         
         self.SearchClient = Label(self.ClientForm, text='Nom Article',font =('Segoe UI',10),fg='#adabab',bg='white')
         self.SearchClient.place(relx=0.02,rely=0.5)
+        remplirDonnee()
 
-        self.ComboArticle=ttk.Combobox(self.ClientForm, font =('Segoe UI',10),values=listeArticles)
-        self.ComboArticle.place(relx=0.02,rely=0.55,relwidth=0.9, height=26)
-        self.ComboArticle.bind("<<ComboboxSelected>>")
 
         self.SearchClient = Label(self.ClientForm, text='Prix',font =('Segoe UI',10),fg='#adabab',bg='white')
         self.SearchClient.place(relx=0.02,rely=0.62)
@@ -70,7 +94,7 @@ class GestionArticle :
         self.PrixEntry.place(relx=0.02,rely=0.02,relwidth=0.96, height=26)
 
         #Buttons Actions
-        self.bouton_enregistrerPrix= Button(self.ClientForm,bg='white',text='Valider',relief='groove', font =('Segoe UI',9),fg='#416b70',command=lambda:AjoutPrix())
+        self.bouton_enregistrerPrix= Button(self.ClientForm,bg='white',text='Valider',relief='groove', font =('Segoe UI',9),fg='#416b70',command=lambda:AjoutPrix(self))
         self.bouton_enregistrerPrix.place(relx=0.1,rely=0.8,relwidth=0.3, height=30)
 
         self.bouton_ModifierPrix= Button(self.ClientForm,bg='white',text='Modifier',relief='groove', font =('Segoe UI',9),fg='#416b70',command=lambda:ModifierPrix())
@@ -79,7 +103,15 @@ class GestionArticle :
         def AjoutArticle():
             if self.NomArticleEntry.get()!="":
                 if  self.verification.Verification(self.NomArticleEntry.get())==False :
-                    pass
+                    product=Product_back(self.NomArticleEntry.get())
+                   
+                   
+                    if product.add_produit(self.curseur):
+                        showinfo('Ajout','Article ajouté avec succès'
+                                 )
+                        remplirDonnee()
+                    else:
+                        ra=0
                 else:
                     showwarning(self.config[0],'Vous avez entré des valeurs numériques')
             else :
@@ -87,17 +119,22 @@ class GestionArticle :
 
         def ModifierArticle():
             if self.NomArticleEntry.get()!="":
-                if  self.verification.Verification(self.NomArticleEntry.get())==False :
+                if  self.verification.Verification(self.NomArticleEntry.get())==False:
                     pass
                 else:
                     showwarning(self.config[0],'Vous avez entré des valeurs numériques')
             else :
                     showwarning(self.config[0],"Veuillez entrer le nom de l'article")
         
-        def AjoutPrix():
-            if self.ComboArticle.get()!="" and self.ComboArticle.get()!="" :
-                if  self.verification.Verification(self.PrixEntry.get()) and self.verification.Verification(self.ComboArticle.get())==False   :
-                    pass
+        def AjoutPrix(self):
+           
+            if self.id_art !=None :
+                if  self.verification.Verification(self.PrixEntry.get())==True and self.verification.Verification(self.ComboArticle.get())==False   :
+                    pv=Prix_vente_back(self.ComboArticle.get().split('|')[0],self.PrixEntry.get())
+                    print(self.id_art)
+                    if pv.add_prix_vente(self.curseur):
+                        showinfo('Succès','Le prix est mis à jour')
+                    
                 else:
                     showwarning(self.config[0],'un de champs contient une inapropriée')
             else :
@@ -143,12 +180,14 @@ class GestionArticle :
         self.canvas.configure(yscrollcommand=scrollbar.set)
 
         self.title = Label(self.tabStockActuel, text="Identifiant", font=('Segoe UI ', 10), fg='#416b70', bg='white').place(relx=0.03, rely=0.02, relwidth=0.43)
-        self.title = Label(self.tabStockActuel, text="Quantité ", font=('Segoe UI ', 10), fg='#416b70', bg='white').place(relx=0.47, rely=0.02, relwidth=0.4)
+        self.title = Label(self.tabStockActuel, text="Designation ", font=('Segoe UI ', 10), fg='#416b70', bg='white').place(relx=0.47, rely=0.02, relwidth=0.4)
 
 
         y=0
+        product=Product_back('')
+        
         #Affichage des ventes dans le tableau
-        data=self.FakeData.dataArticleDisponible()
+        data=product.nom_produit_dispo(self.curseur)
         t=0.1
         a=1
         for item in data:
@@ -163,7 +202,7 @@ class GestionArticle :
 
                 self.bouton_Detail= Button(self.label,bg='#ebf4f5',text='Prix',relief='flat', font =('Segoe UI',9),fg='#adabab')
                 self.bouton_Detail.place(relx=0.72,rely=0.25,relwidth=0.25, height=26)
-                self.bouton_Detail.configure( command=lambda article=item[0]:HandleClickDetails(article))
+                self.bouton_Detail.configure( command=lambda article=[item[1],item[0]]:HandleClickDetails(article))
                 window_id = self.canvas.create_window(20, y, anchor=W, window=self.label)  # Adjust x-position (20 here) as needed
                 y += self.label.winfo_reqheight() + 5
 
@@ -178,13 +217,13 @@ class GestionArticle :
                 self.title2.place(relx=0.45, rely=0.25,relwidth=0.4)
 
                 # A revoir pour la modification
-                self.title2.bind('<Double-Button-1>', lambda article=item[0]: HandleUpdateArticle(item[0]))
+                self.title2.bind('<Double-Button-1>', lambda article=item[0]: HandleUpdateArticle(item[1]))
                 self.title1.bind('<Double-Button-1>', lambda article=item[0]: HandleUpdateArticle(article))
 
 
                 self.bouton_Detail= Button(self.label,bg='#ebf4f5',text='Prix',relief='flat', font =('Segoe UI',9),fg='#adabab')
                 self.bouton_Detail.place(relx=0.84,rely=0.25,relwidth=0.15, height=26)
-                self.bouton_Detail.configure( command=lambda article=item[0]:HandleClickDetails(article))
+                self.bouton_Detail.configure( command=lambda article=[item[1],item[0]]:HandleClickDetails(article))
                 window_id = self.canvas.create_window(20, y, anchor=W, window=self.label)  # Adjust x-position (20 here) as needed
                 y += self.label.winfo_reqheight() + 5
                 a=0
@@ -198,7 +237,7 @@ class GestionArticle :
                 self.title = Label(self.label, text =item[1], font = ('Segoe UI ',10),fg='#adabab',bg='white').place(relx=0.45, rely=0.25,relwidth=0.4)
                 self.bouton_Detail= Button(self.label,bg='#ebf4f5',text='Prix',relief='flat', font =('Segoe UI',9),fg='#adabab')
                 self.bouton_Detail.place(relx=0.84,rely=0.25,relwidth=0.15, height=26)
-                self.bouton_Detail.configure( command=lambda article=item[0]:HandleClickDetails(article))
+                self.bouton_Detail.configure( command=lambda article=[item[1],item[0]]:HandleClickDetails(article))
                 window_id = self.canvas.create_window(20, y, anchor=W, window=self.label)  # Adjust x-position (20 here) as needed
                 y += self.label.winfo_reqheight() + 5
                 
@@ -211,7 +250,8 @@ class GestionArticle :
 
             def HandleClickDetails(nomArticle):
             #-----------------Details stock-----------------------
-                print(nomArticle)
+               # print(nomArticle)
+               
                 def Capture():
                     self.DetailsStock(nomArticle,330)
                 Capture()
@@ -228,7 +268,7 @@ class GestionArticle :
         self.Contneur = Frame(self.RightContener, bg='#ebf4f5')
         self.Contneur.place(relx=0.5, rely=0.00, relwidth=0.5, relheight=1)
 
-        self.title_listeVente = Label(self.Contneur, text="TABLEAU DE PRIX DE  " + nomArticle, font=('Segoe UI bold', 12), fg='black', bg='#ebf4f5')
+        self.title_listeVente = Label(self.Contneur, text="TABLEAU DE PRIX DE  " + nomArticle[0], font=('Segoe UI bold', 12), fg='black', bg='#ebf4f5')
         self.title_listeVente.place(relx=0.2, rely=0.02)
 
         # Create a frame to hold the actual list items (inside the canvas)
@@ -256,8 +296,12 @@ class GestionArticle :
 
         # Loop to generate stock list items dynamically
         t = 0.1  # Initial vertical position for the first item
-        data = self.FakeData.dataArticleDisponible()
+        pv=Prix_vente_back('','')
+        
+        data = pv.get_prix_vente(self.curseur,nomArticle[1])[1]
+        print(data)
         a=1
+       
         for item in data:
 
             if a==1:

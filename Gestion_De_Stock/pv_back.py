@@ -29,3 +29,14 @@ class Prix_vente_back:
             messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
           
             return False,[]
+    #dans db
+    def get_prix_vente(self,curseur,id_produit):
+        try:
+            curseur.execute(f"SELECT date_fixation,montant FROM tb_prix_vente where id_produit='{id_produit}' order by(date_fixation) desc")
+            return True,curseur.fetchall()
+        
+        except Exception as e:
+            messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
+          
+            return False,[]
+        
