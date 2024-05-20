@@ -5,10 +5,10 @@ class Stock_back:
         self.id_produit=id_produit
         self.nombre_piece=nombre_piece
         self.prix_unitaire=prix_unitaire
-        if self.nombre_piece<=10 and self.nombre_piece!=0:
-            self.statut_stock='bas niveau'
-        elif self.nombre_piece>10:
-            self.statut_stock='disponible'
+        if int(self.nombre_piece)<=10 and int(self.nombre_piece)!=0:
+            self.statut_stock='Bas niveau'
+        elif int(self.nombre_piece)>10:
+            self.statut_stock='Disponible'
     #insert new stock
     def add_stock(self,curseur):
         try:
@@ -32,7 +32,7 @@ class Stock_back:
     #del
     def del_stock(self,curseur,id_stock):
         try:
-            curseur.execute('delete from tb_stock where id_stock=%s'(id_stock,)
+            curseur.execute('delete from tb_stock where id_stock=%s',(id_stock,)
                             )
             return True
         except Exception as e:
@@ -40,6 +40,24 @@ class Stock_back:
             messagebox.showerror('Erreur',f'Erreur lors de la suppression  du stock  à la base de données : {e}')
             return False
     #get_stock
+    def get_stock_restant(self,curseur):
+        try:
+            string_query=f"""SELECT tb_produit.designation_produit, 
+                            (IFNULL(SUM(tb_stock.nombre_piece),0) - IFNULL(SUM(tb_vente.quantite), 0)) AS somme_restante
+                            FROM tb_produit
+                         LEFT JOIN tb_stock ON tb_produit.id_produit = tb_stock.id_produit
+                         LEFT JOIN tb_vente ON tb_produit.id_produit = tb_vente.id_produit
+                        GROUP BY tb_produit.designation_produit
+                            HAVING somme_restante > 0;
+                                                    """
+    
+            curseur.execute(string_query)
+            return True,curseur.fetchall()
+        
+        except Exception as e:
+            messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
+          
+            return False,[]
     
     
     def get_all_stock(self,curseur):
@@ -63,4 +81,25 @@ class Stock_back:
             resultat=[]
             messagebox.showerror('Erreur',f'Erreur lors de la recuperation des données  à la base de données : {e}')
             return resultat
-        
+    def get_detail_stock_produit(self,curseur,designation_produit):
+        try:
+            
+            string_query=f"""SELECT tb_produit.designation_produit,
+                            tb_stock.date_entree AS 'Date d entrée',
+                            tb_stock.nombre_piece AS 'Nombre de pièce en stock',
+                            COALESCE(MAX(tb_facture.date_facturation), 'Pas encore vendu') AS 'Date de sortie',
+                            COALESCE(SUM(tb_vente.quantite), 0) AS 'Quantité sortie'
+                            FROM tb_produit
+                            LEFT JOIN tb_stock ON tb_produit.id_produit = tb_stock.id_produit
+                            LEFT JOIN tb_vente ON tb_produit.id_produit = tb_vente.id_produit
+                            LEFT JOIN tb_facture ON tb_vente.id_facture = tb_facture.id_facture
+                            WHERE tb_produit.designation_produit = '{designation_produit}'
+                            GROUP BY tb_produit.designation_produit, tb_stock.date_entree, tb_stock.nombre_piece
+                            ORDER BY COALESCE(MAX(tb_facture.date_facturation), '0000-00-00 00:00:00') DESC;
+
+                                                    """
+            curseur.execute(string_query)
+            return True,curseur.fetchall()
+        except Exception as e:
+            messagebox.showerror('Erreur',f'Erreur lors de la recuperation des données  à la base de données : {e}')
+            return False,[]

@@ -1,13 +1,18 @@
+from produit_backend import Product_back
 from tkinter import *
 from configuration import InfosApp
 from fakeData import FakeData
 from tkinter import ttk
+from stock_backend import Stock_back
 from verificationEntry import EntryVerification
 from tkinter.messagebox import askyesno,showinfo,showwarning
 from configuration import InfosApp
+from stock_backend import Stock_back
 class GestionStock :
     def __init__(self,fen,con):
         self.fen = fen
+        self.db=con
+        self.curseur=self.db.get_curseur()
         self.configApp=InfosApp
         self.FakeData=FakeData()
         self.config=self.configApp.Configuration(self)
@@ -40,7 +45,15 @@ class GestionStock :
         self.NomArticle=ttk.Combobox(self.ApproForm, font =('Segoe UI',10))
         self.NomArticle.place(relx=0.02,rely=0.15,relwidth=0.9, height=26)
         self.NomArticle.bind("<<ComboboxSelected>>")
-
+        
+        
+        liste_valeur=[]
+        product=Product_back('')
+        listeArticles=product.get_all_produit(self.curseur)[1]
+            #Formulaire clients
+        for i in listeArticles:
+                liste_valeur.append(i[0]+'|'+i[1])
+        self.NomArticle['values']=liste_valeur
         self.ArticleLabel = Label(self.ApproForm, text="Prix d'achat Unit.",font =('Segoe UI',10),fg='#adabab',bg='white')
         self.ArticleLabel.place(relx=0.02,rely=0.25)
 
@@ -68,7 +81,14 @@ class GestionStock :
         def AjouterStock():
             if self.PrixEntry.get()!="" and self.QuantEntry.get()!="" and self.NomArticle.get()!=""  :
                 if  self.verification.Verification(self.PrixEntry.get()) and self.verification.Verification(self.QuantEntry.get()) :
-                    pass
+                    stock=Stock_back(self.NomArticle.get().split('|')[0],self.QuantEntry.get(),self.PrixEntry.get())
+                    if stock.add_stock(self.curseur):
+                        showinfo('Ajout','Ajout Stock Réussi')
+                        self.QuantiteGeneralStock(270)
+                        
+                        
+                    
+                    
                 else:
                     showwarning(self.config[0],'Vous avez entrer des mauvaises données')
             else :
@@ -114,7 +134,9 @@ class GestionStock :
 
         y=0
         #Affichage des ventes dans le tableau
-        data=self.FakeData.dataArticleDisponible()
+        #data=self.FakeData.dataArticleDisponible()
+        stock=Stock_back('',0,0)
+        data=stock.get_stock_restant(self.curseur)[1]
         t=0.1
         a=1
         for item in data:
@@ -213,6 +235,8 @@ class GestionStock :
         # Loop to generate stock list items dynamically
         t = 0.1  # Initial vertical position for the first item
         data = self.FakeData.dataArticleDisponible()
+        stock=Stock_back(nomArticle,0,0)
+        data=stock.get_detail_stock_produit(self.curseur,stock.id_produit)[1]
         a=1
         for item in data:
 
@@ -233,8 +257,8 @@ class GestionStock :
                 ligne = Frame(self.label, bg='#d6d4d4', height=-20).place(relx=0.0, rely=0.1, relwidth=1)
 
                 # Labels for article name and quantity
-                self.title = Label(self.label, text=item[0], font=('Segoe UI', 10), fg='#adabab', bg='white').place(relx=0.03, rely=0.25, relwidth=0.43)
-                self.title = Label(self.label, text=item[1], font=('Segoe UI ', 10), fg='#adabab', bg='white').place(relx=0.4, rely=0.25, relwidth=0.43)
+                self.title = Label(self.label, text=item[1], font=('Segoe UI', 10), fg='#adabab', bg='white').place(relx=0.03, rely=0.25, relwidth=0.43)
+                self.title = Label(self.label, text=item[2], font=('Segoe UI ', 10), fg='#adabab', bg='white').place(relx=0.4, rely=0.25, relwidth=0.43)
                 window_id = self.canvas.create_window(20, y, anchor=W, window=self.label)  # Adjust x-position (20 here) as needed
                 y += self.label.winfo_reqheight() + 5
 
@@ -249,8 +273,8 @@ class GestionStock :
                 ligne = Frame(self.label, bg='#d6d4d4', height=-20).place(relx=0.0, rely=0.1, relwidth=1)
 
                 # Labels for article name and quantity
-                self.title = Label(self.label, text=item[0], font=('Segoe UI', 10), fg='#adabab', bg='white').place(relx=0.03, rely=0.25, relwidth=0.43)
-                self.title = Label(self.label, text=item[1], font=('Segoe UI ', 10), fg='#adabab', bg='white').place(relx=0.4, rely=0.25, relwidth=0.43)
+                self.title = Label(self.label, text=item[1], font=('Segoe UI', 10), fg='#adabab', bg='white').place(relx=0.03, rely=0.25, relwidth=0.43)
+                self.title = Label(self.label, text=item[2], font=('Segoe UI ', 10), fg='#adabab', bg='white').place(relx=0.4, rely=0.25, relwidth=0.43)
                 window_id = self.canvas.create_window(20, y, anchor=W, window=self.label)  # Adjust x-position (20 here) as needed
                 y += self.label.winfo_reqheight() + 5
 

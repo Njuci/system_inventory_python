@@ -3,15 +3,22 @@ from pv_back import Prix_vente_back
 from client_backend import Client_back
 connex=Connexion("root","3670njci")
 curseur=connex.get_curseur()
-client=Client_back('Njuci 4','Bukavu')
-Pv=Prix_vente_back('PRO0000002',00)
-Pv.add_prix_vente(curseur)
+from stock_backend import Stock_back
+stock=Stock_back('PRO0000002',100,100)
 
-print(Pv.get_last_pv(curseur,'PRO0000002')[1])
+print(stock.get_detail_stock_produit(curseur,'banane')[1])
+
+
+
+
+
 
 
 
 """
+client=Client_back('Njuci 4','Bukavu')
+Pv=Prix_vente_back('PRO0000002',00)
+Pv.add_prix_vente(curseur)
 
 client=Client_back('Njuci 4','Bukavu')
 Pv=Prix_vente_back('CLI0000004',500)

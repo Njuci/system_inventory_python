@@ -45,15 +45,13 @@ class GestionArticle :
             #Formulaire clients
             for i in listeArticles:
                 liste_valeur.append(i[0]+'|'+i[1])
-            print(liste_valeur)
-            def get_id_art():
-                self.id_art=self.ComboArticle.get().split("|")[0]
-    
-            self.ComboArticle=ttk.Combobox(self.ClientForm, font =('Segoe UI',10))
+            return liste_valeur
+        
             
-            self.ComboArticle.place(relx=0.02,rely=0.55,relwidth=0.9, height=26)
-            self.ComboArticle['values']=liste_valeur
-            self.ComboArticle.bind("<<ComboboxSelected>>",get_id_art())
+            
+        def get_id_art(self):
+            self.id_art=self.ComboArticle.get().split("|")[0]
+    
             
 
         self.ClientForm=Frame(self.fen,bg='white')
@@ -71,7 +69,7 @@ class GestionArticle :
         self.NomArticleEntry.insert(0,ValeurArticle)
 
         #Buttons Actions
-        self.bouton_enregistrer= Button(self.ClientForm,bg='white',text='Enregistrer',relief='groove', font =('Segoe UI',9),fg='#416b70',command=lambda:AjoutArticle())
+        self.bouton_enregistrer= Button(self.ClientForm,bg='white',text='Enregistrer',relief='groove', font =('Segoe UI',9),fg='#416b70',command=lambda:AjoutArticle(self))
         self.bouton_enregistrer.place(relx=0.1,rely=0.28,relwidth=0.3, height=30)
 
         self.bouton_Modifier= Button(self.ClientForm,bg='white',text='Modifier',relief='groove', font =('Segoe UI',9),fg='#416b70',command=lambda:ModifierArticle())
@@ -82,8 +80,22 @@ class GestionArticle :
         
         self.SearchClient = Label(self.ClientForm, text='Nom Article',font =('Segoe UI',10),fg='#adabab',bg='white')
         self.SearchClient.place(relx=0.02,rely=0.5)
-        remplirDonnee()
-
+        self.ComboArticle=ttk.Combobox(self.ClientForm, font =('Segoe UI',10))
+            
+        self.ComboArticle.place(relx=0.02,rely=0.55,relwidth=0.9, height=26)
+        
+        self.ComboArticle.bind("<<ComboboxSelected>>")
+        
+        
+        liste_valeur=[]
+        product=Product_back('')
+        listeArticles=product.get_all_produit(self.curseur)[1]
+            #Formulaire clients
+        for i in listeArticles:
+                liste_valeur.append(i[0]+'|'+i[1])
+        self.ComboArticle['values']=liste_valeur
+            
+        
 
         self.SearchClient = Label(self.ClientForm, text='Prix',font =('Segoe UI',10),fg='#adabab',bg='white')
         self.SearchClient.place(relx=0.02,rely=0.62)
@@ -94,13 +106,36 @@ class GestionArticle :
         self.PrixEntry.place(relx=0.02,rely=0.02,relwidth=0.96, height=26)
 
         #Buttons Actions
-        self.bouton_enregistrerPrix= Button(self.ClientForm,bg='white',text='Valider',relief='groove', font =('Segoe UI',9),fg='#416b70',command=lambda:AjoutPrix(self))
+        self.bouton_enregistrerPrix= Button(self.ClientForm,bg='white',text='Valider',relief='groove', font =('Segoe UI',9),fg='#416b70',command=lambda:AjoutPrix())
         self.bouton_enregistrerPrix.place(relx=0.1,rely=0.8,relwidth=0.3, height=30)
 
         self.bouton_ModifierPrix= Button(self.ClientForm,bg='white',text='Modifier',relief='groove', font =('Segoe UI',9),fg='#416b70',command=lambda:ModifierPrix())
         self.bouton_ModifierPrix.place(relx=0.45, rely=0.8,relwidth=0.3, height=30)
+       
 
-        def AjoutArticle():
+        def AjoutPrix():
+            """Fonction permettant d'ajouter un nouveau prix de vente."""
+            print(self.ComboArticle.get())
+            print(self.id_art)
+            print(self.PrixEntry.get())
+            """            if self.id_art is None or self.id_art =='':
+                showwarning(self.config[0], "Veuillez sélectionner un article")
+                return"""
+
+
+            # Vérification des champs saisis
+            if (not self.verification.Verification(self.PrixEntry.get())) or (not self.verification.Verification(self.ComboArticle.get())):
+                prix_vente = Prix_vente_back(self.ComboArticle.get().split('|')[0], self.PrixEntry.get())
+                if prix_vente.add_prix_vente(self.curseur):
+                    showinfo('Succès', 'Le prix a été mis à jour')
+                    remplirDonnee()
+                    self.id_art = None
+                else:
+                    showwarning(self.config[0], 'Une erreur est survenue')
+            else:
+                showwarning(self.config[0], "Un des champs contient une valeur invalide")
+
+        def AjoutArticle(self):
             if self.NomArticleEntry.get()!="":
                 if  self.verification.Verification(self.NomArticleEntry.get())==False :
                     product=Product_back(self.NomArticleEntry.get())
@@ -109,7 +144,7 @@ class GestionArticle :
                     if product.add_produit(self.curseur):
                         showinfo('Ajout','Article ajouté avec succès'
                                  )
-                        remplirDonnee()
+                        remplirDonnee(self)
                     else:
                         ra=0
                 else:
@@ -126,20 +161,7 @@ class GestionArticle :
             else :
                     showwarning(self.config[0],"Veuillez entrer le nom de l'article")
         
-        def AjoutPrix(self):
-           
-            if self.id_art !=None :
-                if  self.verification.Verification(self.PrixEntry.get())==True and self.verification.Verification(self.ComboArticle.get())==False   :
-                    pv=Prix_vente_back(self.ComboArticle.get().split('|')[0],self.PrixEntry.get())
-                    print(self.id_art)
-                    if pv.add_prix_vente(self.curseur):
-                        showinfo('Succès','Le prix est mis à jour')
-                    
-                else:
-                    showwarning(self.config[0],'un de champs contient une inapropriée')
-            else :
-                    showwarning(self.config[0],"Veuillez remplir tout les champs")
-        
+            
         def ModifierPrix():
             if self.ComboArticle.get()!="" and self.ComboArticle.get()!="" :
                 if  self.verification.Verification(self.PrixEntry.get()) and self.verification.Verification(self.ComboArticle.get())==False   :
@@ -181,7 +203,7 @@ class GestionArticle :
 
         self.title = Label(self.tabStockActuel, text="Identifiant", font=('Segoe UI ', 10), fg='#416b70', bg='white').place(relx=0.03, rely=0.02, relwidth=0.43)
         self.title = Label(self.tabStockActuel, text="Designation ", font=('Segoe UI ', 10), fg='#416b70', bg='white').place(relx=0.47, rely=0.02, relwidth=0.4)
-
+        
 
         y=0
         product=Product_back('')
@@ -351,3 +373,22 @@ class GestionArticle :
         self.canvas.update_idletasks()
         self.canvas.config(scrollregion=(0, 0, self.canvas.winfo_width(), self.canvas.winfo_height() + y))
     
+    def AjoutPrix(self):
+            """Fonction permettant d'ajouter un nouveau prix de vente."""
+            print(self.ComboArticle.get())
+
+            if self.id_art is None:
+                showwarning(self.config[0], "Veuillez sélectionner un article")
+                return
+
+            # Vérification des champs saisis
+            if (not self.verification.Verification(self.PrixEntry.get())) or (not self.verification.Verification(self.ComboArticle.get())):
+                prix_vente = Prix_vente_back(self.ComboArticle.get().split('|')[0], self.PrixEntry.get())
+                if prix_vente.add_prix_vente(self.curseur):
+                    showinfo('Succès', 'Le prix a été mis à jour')
+                    self.remplirDonnee()
+                    self.id_art = None
+                else:
+                    showwarning(self.config[0], 'Une erreur est survenue')
+            else:
+                showwarning(self.config[0], "Un des champs contient une valeur invalide")
