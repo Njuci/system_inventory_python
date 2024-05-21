@@ -229,8 +229,8 @@ class GestionStock :
         y = 0
 
         # Headers for the stock list
-        self.title = Label(self.tabStockActuel, text="Date entrée", font=('Segoe UI ', 10), fg='#416b70', bg='white').place(relx=0.03, rely=0.02, relwidth=0.43)
-        self.title = Label(self.tabStockActuel, text="Quantité ", font=('Segoe UI ', 10), fg='#416b70', bg='white').place(relx=0.47, rely=0.02, relwidth=0.4)
+        self.title = Label(self.tabStockActuel, text="Date entrée", font=('Segoe UI ', 10), fg='#416b70', bg='white').place(relx=0.03, rely=0.02, relwidth=0.45)
+        self.title = Label(self.tabStockActuel, text="Quantité ", font=('Segoe UI ', 10), fg='#416b70', bg='white').place(relx=0.47, rely=0.02, relwidth=0.25)
 
         # Loop to generate stock list items dynamically
         t = 0.1  # Initial vertical position for the first item
@@ -257,8 +257,8 @@ class GestionStock :
                 ligne = Frame(self.label, bg='#d6d4d4', height=-20).place(relx=0.0, rely=0.1, relwidth=1)
 
                 # Labels for article name and quantity
-                self.title = Label(self.label, text=item[1], font=('Segoe UI', 10), fg='#adabab', bg='white').place(relx=0.03, rely=0.25, relwidth=0.43)
-                self.title = Label(self.label, text=item[2], font=('Segoe UI ', 10), fg='#adabab', bg='white').place(relx=0.4, rely=0.25, relwidth=0.43)
+                self.title = Label(self.label, text=item[1], font=('Segoe UI', 10), fg='#adabab', bg='white').place(relx=0.03, rely=0.25, relwidth=0.45)
+                self.title = Label(self.label, text=item[2], font=('Segoe UI ', 10), fg='#adabab', bg='white').place(relx=0.4, rely=0.25, relwidth=0.45)
                 window_id = self.canvas.create_window(20, y, anchor=W, window=self.label)  # Adjust x-position (20 here) as needed
                 y += self.label.winfo_reqheight() + 5
 
@@ -273,8 +273,8 @@ class GestionStock :
                 ligne = Frame(self.label, bg='#d6d4d4', height=-20).place(relx=0.0, rely=0.1, relwidth=1)
 
                 # Labels for article name and quantity
-                self.title = Label(self.label, text=item[1], font=('Segoe UI', 10), fg='#adabab', bg='white').place(relx=0.03, rely=0.25, relwidth=0.43)
-                self.title = Label(self.label, text=item[2], font=('Segoe UI ', 10), fg='#adabab', bg='white').place(relx=0.4, rely=0.25, relwidth=0.43)
+                self.title = Label(self.label, text=item[1], font=('Segoe UI', 10), fg='#adabab', bg='white').place(relx=0.03, rely=0.25, relwidth=0.45)
+                self.title = Label(self.label, text=item[2], font=('Segoe UI ', 10), fg='#adabab', bg='white').place(relx=0.4, rely=0.25, relwidth=0.45)
                 window_id = self.canvas.create_window(20, y, anchor=W, window=self.label)  # Adjust x-position (20 here) as needed
                 y += self.label.winfo_reqheight() + 5
 

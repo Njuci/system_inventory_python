@@ -3,11 +3,13 @@ from configuration import InfosApp
 from fakeData import FakeData
 from verificationEntry import EntryVerification
 from tkinter.messagebox import askyesno,showinfo,showwarning
-
+from client_backend import Client_back
 class GestionClient :
     def __init__(self,fen,con):
         self.fen = fen
         self.configApp=InfosApp
+        self.db=con
+        self.curseur=self.db.get_curseur()
         self.FakeData=FakeData()
         self.verification=EntryVerification()
         self.config=self.configApp.Configuration(self)
@@ -52,11 +54,18 @@ class GestionClient :
 
         self.bouton_Modifier= Button(self.ClientForm,bg='white',text='Modifier',relief='groove', font =('Segoe UI',9),fg='#416b70',command=lambda:ModifierClient())
         self.bouton_Modifier.place(relx=0.5, rely=0.6,relwidth=0.3, height=30)
+        
+        
 
         def AjoutClient():
             if self.NomEntry.get()!="" or self.NumEntry.get()!="" :
-                if  self.verification.Verification(self.NomEntry.get())==False and self.verification.Verification(self.NumEntry.get())==True :
-                    pass
+                if  self.verification.Verification(self.NomEntry.get())==False and self.verification.Verification(self.NumEntry.get())==False :
+                    client=Client_back(self.NomEntry.get(),self.NumEntry.get())
+                    if client.add_client(self.curseur):
+                        showinfo(self.config[0],'Client ajouté avec succès')
+                        self.NomEntry.delete(0,END)
+                        self.NumEntry.delete(0,END)
+                        self.TableauClients(560)
                 else:
                     showwarning(self.config[0],'Veuillez respecter le type de données ')
             else :
@@ -64,7 +73,7 @@ class GestionClient :
         
         def ModifierClient():
             if self.NomEntry.get()!="" or self.NumEntry.get()!="" :
-                if  self.verification.Verification(self.NomEntry.get())==False and self.verification.Verification(self.NumEntry.get())==True :
+                if  self.verification.Verification(self.NomEntry.get())==False and self.verification.Verification(self.NumEntry.get())==False :
                     pass
                 else:
                     showwarning(self.config[0],'Veuillez respecter le type de données ')
@@ -108,6 +117,8 @@ class GestionClient :
         y=0
         #Affichage des ventes dans le tableau
         data=self.FakeData.dataArticleDisponible()
+        client=Client_back('','')
+        data=client.get_all_client(self.curseur)[1]
         t=0.1
         a=1
         for item in data:
@@ -131,9 +142,9 @@ class GestionClient :
                 self.label.place(relx=0.02, rely=0, relwidth=1, relheight=0.1)
                 ligne = Frame(self.label, bg='#d6d4d4', height=-20).place(relx=0.0, rely=0.1, relwidth=1)
 
-                self.title1 = Label(self.label, text = item[0], font = ('Segoe UI',10),fg='#adabab',bg='white')
+                self.title1 = Label(self.label, text = item[2], font = ('Segoe UI',10),fg='#adabab',bg='white')
                 self.title1.place(relx=0.03, rely=0.25,relwidth=0.45)
-                self.title2 = Label(self.label, text =item[1], font = ('Segoe UI ',10),fg='#adabab',bg='white')
+                self.title2 = Label(self.label, text =item[3], font = ('Segoe UI ',10),fg='#adabab',bg='white')
                 self.title2.place(relx=0.45, rely=0.25,relwidth=0.4)
 
                 # A revoir pour la modification
@@ -153,8 +164,8 @@ class GestionClient :
                 self.label.place(relx=0.02, rely=0, relwidth=1, relheight=0.1)
                 ligne = Frame(self.label, bg='#d6d4d4', height=-20).place(relx=0.0, rely=0.1, relwidth=1)
 
-                self.title = Label(self.label, text = item[0], font = ('Segoe UI',10),fg='#adabab',bg='white').place(relx=0.03, rely=0.25,relwidth=0.45)
-                self.title = Label(self.label, text =item[1], font = ('Segoe UI ',10),fg='#adabab',bg='white').place(relx=0.45, rely=0.25,relwidth=0.4)
+                self.title = Label(self.label, text = item[2], font = ('Segoe UI',10),fg='#adabab',bg='white').place(relx=0.03, rely=0.25,relwidth=0.45)
+                self.title = Label(self.label, text =item[3], font = ('Segoe UI ',10),fg='#adabab',bg='white').place(relx=0.45, rely=0.25,relwidth=0.4)
                 self.bouton_Detail= Button(self.label,bg='#ebf4f5',text='Modifier',relief='flat', font =('Segoe UI',9),fg='#adabab')
                 self.bouton_Detail.place(relx=0.84,rely=0.25,relwidth=0.15, height=26)
                 self.bouton_Detail.configure( command=lambda article=item[0]:HandleClickDetails(article))
