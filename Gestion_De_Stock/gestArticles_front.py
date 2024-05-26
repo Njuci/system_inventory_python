@@ -31,29 +31,42 @@ class GestionArticle :
         #----------------------------Tab section -------------------------------
         self.TableauArticles(330)
 
-
+        self.product=Product_back('')
+        self.listeArticles=self.product.get_all_produit(self.curseur)[1]
+        self.AllArticles={}
+        self.ComboArticles=[]
+        if len(self.listeArticles)!=0:
+            for i in (self.listeArticles):
+                self.AllArticles[''+i[1]]=i[0]
+                self.ComboArticles.append(i[1])
+                
+        self.ComboArticle=ttk.Combobox(self.fen,values=self.ComboArticles)
+        self.ComboArticle.place(relx=0.02,rely=0.55,width=280, height=26)
 
     def FormulaireArticle(self):
         ValeurArticle=''
         #donnee de l'article
         def remplirDonnee():
-                
+            self.TableauArticles(330)
+            self.FormulaireArticle()
             
-            liste_valeur=[]
-            product=Product_back('')
-            listeArticles=product.get_all_produit(self.curseur)[1]
-            #Formulaire clients
-            for i in listeArticles:
-                liste_valeur.append(i[0]+'|'+i[1])
-            return liste_valeur
+            self.product=Product_back('')
+            self.listeArticles=self.product.get_all_produit(self.curseur)[1]
+            self.AllArticles={}
+            self.ComboArticles=[]
+            if len(self.listeArticles)!=0:
+                for i in (self.listeArticles):
+                    self.AllArticles[''+i[1]]=i[0]
+                    self.ComboArticles.append(i[1])
         
             
-            
+            self.ComboArticle=ttk.Combobox(self.fen,values=self.ComboArticles)
+            self.ComboArticle.place(relx=0.02,rely=0.55,width=280, height=26)
+        
         def get_id_art(self):
             self.id_art=self.ComboArticle.get().split("|")[0]
     
             
-
         self.ClientForm=Frame(self.fen,bg='white')
         self.ClientForm.place(x=20, rely=0.1,relwidth=0.25,relheight=0.8)
         self.title_section1 = Label(self.ClientForm, text = "AJOUT ET MODIFICATION ARTICLE", font = ('Segoe UI',10),fg=self.couleur['CouleurTitreText'],bg="white").place(relx=0.15, rely=0.03)
@@ -69,7 +82,7 @@ class GestionArticle :
         self.NomArticleEntry.insert(0,ValeurArticle)
 
         #Buttons Actions
-        self.bouton_enregistrer= Button(self.ClientForm,bg='white',text='Enregistrer',relief='groove', font =('Segoe UI',9),fg='#416b70',command=lambda:AjoutArticle(self))
+        self.bouton_enregistrer= Button(self.ClientForm,bg='white',text='Enregistrer',relief='groove', font =('Segoe UI',9),fg='#416b70',command=lambda:AjoutArticle())
         self.bouton_enregistrer.place(relx=0.1,rely=0.28,relwidth=0.3, height=30)
 
         self.bouton_Modifier= Button(self.ClientForm,bg='white',text='Modifier',relief='groove', font =('Segoe UI',9),fg='#416b70',command=lambda:ModifierArticle())
@@ -80,22 +93,8 @@ class GestionArticle :
         
         self.SearchClient = Label(self.ClientForm, text='Nom Article',font =('Segoe UI',10),fg='#adabab',bg='white')
         self.SearchClient.place(relx=0.02,rely=0.5)
-        self.ComboArticle=ttk.Combobox(self.ClientForm, font =('Segoe UI',10))
-            
-        self.ComboArticle.place(relx=0.02,rely=0.55,relwidth=0.9, height=26)
-        
-        self.ComboArticle.bind("<<ComboboxSelected>>")
-        
-        
-        liste_valeur=[]
-        product=Product_back('')
-        listeArticles=product.get_all_produit(self.curseur)[1]
-            #Formulaire clients
-        for i in listeArticles:
-                liste_valeur.append(i[0]+'|'+i[1])
-        self.ComboArticle['values']=liste_valeur
-            
-        
+
+
 
         self.SearchClient = Label(self.ClientForm, text='Prix',font =('Segoe UI',10),fg='#adabab',bg='white')
         self.SearchClient.place(relx=0.02,rely=0.62)
@@ -105,27 +104,23 @@ class GestionArticle :
         self.PrixEntry=Entry(self.paddingEntry,relief='flat', font =('Segoe UI',10),bg='#ebf4f5')
         self.PrixEntry.place(relx=0.02,rely=0.02,relwidth=0.96, height=26)
 
+
+
         #Buttons Actions
         self.bouton_enregistrerPrix= Button(self.ClientForm,bg='white',text='Valider',relief='groove', font =('Segoe UI',9),fg='#416b70',command=lambda:AjoutPrix())
         self.bouton_enregistrerPrix.place(relx=0.1,rely=0.8,relwidth=0.3, height=30)
 
         self.bouton_ModifierPrix= Button(self.ClientForm,bg='white',text='Modifier',relief='groove', font =('Segoe UI',9),fg='#416b70',command=lambda:ModifierPrix())
         self.bouton_ModifierPrix.place(relx=0.45, rely=0.8,relwidth=0.3, height=30)
+
+        def DataSelected():
+            print("cl :"+self.ComboArticle.get())
        
 
         def AjoutPrix():
-            """Fonction permettant d'ajouter un nouveau prix de vente."""
-            print(self.ComboArticle.get())
-            print(self.id_art)
-            print(self.PrixEntry.get())
-            """            if self.id_art is None or self.id_art =='':
-                showwarning(self.config[0], "Veuillez sélectionner un article")
-                return"""
-
-
             # Vérification des champs saisis
             if (not self.verification.Verification(self.PrixEntry.get())) or (not self.verification.Verification(self.ComboArticle.get())):
-                prix_vente = Prix_vente_back(self.ComboArticle.get().split('|')[0], self.PrixEntry.get())
+                prix_vente = Prix_vente_back(self.AllArticles[self.ComboArticle.get()], self.PrixEntry.get())
                 if prix_vente.add_prix_vente(self.curseur):
                     showinfo('Succès', 'Le prix a été mis à jour')
                     remplirDonnee()
@@ -135,7 +130,7 @@ class GestionArticle :
             else:
                 showwarning(self.config[0], "Un des champs contient une valeur invalide")
 
-        def AjoutArticle(self):
+        def AjoutArticle():
             if self.NomArticleEntry.get()!="":
                 if  self.verification.Verification(self.NomArticleEntry.get())==False :
                     product=Product_back(self.NomArticleEntry.get())
@@ -144,7 +139,8 @@ class GestionArticle :
                     if product.add_produit(self.curseur):
                         showinfo('Ajout','Article ajouté avec succès'
                                  )
-                        remplirDonnee(self)
+                        remplirDonnee()
+                        self.NomArticleEntry.delete(0,END)
                     else:
                         ra=0
                 else:
@@ -172,7 +168,7 @@ class GestionArticle :
                     showwarning(self.config[0],"Veuillez remplir tout les champs")
         
         
-        
+    
 #---------------------------tableau articles et quantites globaux en stock ---------------------
 
     def TableauArticles(self,TailTabl):
@@ -209,10 +205,10 @@ class GestionArticle :
         product=Product_back('')
         
         #Affichage des ventes dans le tableau
-        data=product.nom_produit_dispo(self.curseur)
+        data=product.get_all_produit(self.curseur)
         t=0.1
         a=1
-        for item in data:
+        for item in data[1]:
             if a==1:
                 # Create a frame for each item
                 self.label = Frame(self.canvas, bg='white',height=13,width=TailTabl)

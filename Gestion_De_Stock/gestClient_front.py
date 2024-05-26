@@ -19,14 +19,14 @@ class GestionClient :
         self.title_section1 = Label(self.fen, text = "La liste de clients", font = ('Segoe UI bold',14),fg=self.couleur['CouleurTitreText'],bg=self.couleur['Background'])
         self.title_section1.place(relx=0.5, y=20)
         #Formulaire clients
-        self.formulaireClient()
+        self.formulaireClient(['','','',''])
 
         #Conteneur des clients
         self.RightContener=Frame(self.fen,bg='#ebf4f5')
         self.RightContener.place(relx=0.36, rely=0.1,relwidth=0.68,relheight=0.8)
         self.TableauClients(560)
 
-    def formulaireClient(self):
+    def formulaireClient(self,data):
         self.ClientForm=Frame(self.fen,bg='white')
         self.ClientForm.place(x=20, rely=0.1,relwidth=0.3,relheight=0.4)
 
@@ -48,6 +48,9 @@ class GestionClient :
         self.NumEntry=Entry(self.paddingEntry,relief='flat', font =('Segoe UI',10),bg='#ebf4f5')
         self.NumEntry.place(relx=0.02,rely=0.02,relwidth=0.96, height=26)
 
+        self.NumEntry.insert(0,data[3])
+        self.NomEntry.insert(0,data[2])
+
         #Buttons Actions
         self.bouton_enregistrer= Button(self.ClientForm,bg='white',text='Enregistrer',relief='groove', font =('Segoe UI',9),fg='#416b70',command=lambda:AjoutClient())
         self.bouton_enregistrer.place(relx=0.1,rely=0.6,relwidth=0.3, height=30)
@@ -59,7 +62,7 @@ class GestionClient :
 
         def AjoutClient():
             if self.NomEntry.get()!="" or self.NumEntry.get()!="" :
-                if  self.verification.Verification(self.NomEntry.get())==False and self.verification.Verification(self.NumEntry.get())==False :
+                if  self.verification.Verification(self.NomEntry.get())==False and self.verification.Verification(self.NumEntry.get())==True :
                     client=Client_back(self.NomEntry.get(),self.NumEntry.get())
                     if client.add_client(self.curseur):
                         showinfo(self.config[0],'Client ajouté avec succès')
@@ -79,6 +82,7 @@ class GestionClient :
                     showwarning(self.config[0],'Veuillez respecter le type de données ')
             else :
                     showwarning(self.config[0],"Veuillez renseigner tout les champs")
+
 
 
 
@@ -133,7 +137,7 @@ class GestionClient :
 
                 self.bouton_Detail= Button(self.label,bg='#ebf4f5',text='Modifier',relief='flat', font =('Segoe UI',9),fg='#adabab')
                 self.bouton_Detail.place(relx=0.72,rely=0.25,relwidth=0.25, height=26)
-                self.bouton_Detail.configure( command=lambda article=item[0]:HandleClickDetails(article))
+                self.bouton_Detail.configure( command=lambda article=item:HandleUpdateClient(article))
                 window_id = self.canvas.create_window(20, y, anchor=W, window=self.label)  # Adjust x-position (20 here) as needed
                 y += self.label.winfo_reqheight() + 5
 
@@ -147,14 +151,11 @@ class GestionClient :
                 self.title2 = Label(self.label, text =item[3], font = ('Segoe UI ',10),fg='#adabab',bg='white')
                 self.title2.place(relx=0.45, rely=0.25,relwidth=0.4)
 
-                # A revoir pour la modification
-                self.title2.bind('<Double-Button-1>', lambda article=item[0]: HandleUpdateArticle(item[0]))
-                self.title1.bind('<Double-Button-1>', lambda article=item[0]: HandleUpdateArticle(article))
 
 
                 self.bouton_Detail= Button(self.label,bg='#ebf4f5',text='Modifier',relief='flat', font =('Segoe UI',9),fg='#adabab')
                 self.bouton_Detail.place(relx=0.84,rely=0.25,relwidth=0.15, height=26)
-                self.bouton_Detail.configure( command=lambda article=item[0]:HandleClickDetails(article))
+                self.bouton_Detail.configure( command=lambda article=item:HandleUpdateClient(article))
                 window_id = self.canvas.create_window(20, y, anchor=W, window=self.label)  # Adjust x-position (20 here) as needed
                 y += self.label.winfo_reqheight() + 5
                 a=0
@@ -168,7 +169,7 @@ class GestionClient :
                 self.title = Label(self.label, text =item[3], font = ('Segoe UI ',10),fg='#adabab',bg='white').place(relx=0.45, rely=0.25,relwidth=0.4)
                 self.bouton_Detail= Button(self.label,bg='#ebf4f5',text='Modifier',relief='flat', font =('Segoe UI',9),fg='#adabab')
                 self.bouton_Detail.place(relx=0.84,rely=0.25,relwidth=0.15, height=26)
-                self.bouton_Detail.configure( command=lambda article=item[0]:HandleClickDetails(article))
+                self.bouton_Detail.configure( command=lambda article=item:HandleUpdateClient(article))
                 window_id = self.canvas.create_window(20, y, anchor=W, window=self.label)  # Adjust x-position (20 here) as needed
                 y += self.label.winfo_reqheight() + 5
                 
@@ -184,7 +185,7 @@ class GestionClient :
                 print(nomArticle)
             
             #modification de l'article
-            def HandleUpdateArticle(nom):
-                self.FormulaireArticle(['empty'],nom)
+            def HandleUpdateClient(data):
+                self.formulaireClient(data)
 
     #Details stock 
