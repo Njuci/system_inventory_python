@@ -22,7 +22,7 @@ class Prix_vente_back:
     #get_dernier prix d'un produit
     def get_last_pv(self,curseur,id_produit):
         try:
-            curseur.execute(f"SELECT montant FROM tb_prix_vente where id_produit='{id_produit}' order by(date_fixation) desc")
+            curseur.execute(f"SELECT id_pv FROM tb_prix_vente where id_produit='{id_produit}' order by(date_fixation) desc")
             return True,curseur.fetchall()
         
         except Exception as e:

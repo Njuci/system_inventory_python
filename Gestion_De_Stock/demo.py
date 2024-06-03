@@ -1,5 +1,5 @@
 from login_back import Connexion
-from pv_back import Prix_vente_back
+from Gestion_De_Stock.pv_back import Prix_vente_back
 from client_backend import Client_back
 connex=Connexion("root","3670njci")
 curseur=connex.get_curseur()

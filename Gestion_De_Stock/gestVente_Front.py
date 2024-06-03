@@ -7,17 +7,36 @@ from tkinter.messagebox import askyesno,showinfo,showwarning
 from verificationEntry import EntryVerification
 from Rapport_Facture import FacturePDF
 #from tkcalendar import DateEntry
+from produit_backend import Product_back
+from client_backend import Client_back
+from facture_back import Facture_back
+from pv_back import Prix_vente_back
+from stock_backend import Stock_back
+from vente_back import Vente_back
+
 class GestionVente :
     def __init__(self,fen,con):
         self.fen = fen
         self.infosApp=InfosApp
         self.FakeData=FakeData()
+        self.db=con
+        self.curseur=self.db.get_curseur()
         self.RapportPDF=FacturePDF()
         self.title_section1 = Label(self.fen, text = "Formulaire de vente", font = ('Segoe UI bold',14),fg='black',bg='#ebf4f5').place(x=20, y=20)
         self.verification=EntryVerification()
         #Formulaire de vente
         self.listeArtticle=[]
         self.FormulaireVente()
+        self.listeArtticle2=[]
+        self.listeChoix=[]
+
+        prod=Product_back('')
+        data=prod.get_all_produit(self.curseur)[1]
+        product_list=[]
+        for i in data:
+            
+            product_list.append(i[0]+"|"+i[1])
+        self.listeArtticle2=product_list
 
 
         #------------------------entete gauche---------------------------
@@ -79,9 +98,17 @@ class GestionVente :
         self.SearchClient.place(relx=0.02,rely=0.11)
         self.paddingEntry=Frame(self.VenteForm,bg='white')
         self.paddingEntry.place(relx=0.24,rely=0.1,relwidth=0.68, height=30)
+        #get_client
+        client=Client_back('','')
+        clientData=client.get_all_client(self.curseur)[1]
+        data=[]
+        for i in clientData:
+            data.append(i[1]+"|"+i[2])
+        
 
         self.NomClient=ttk.Combobox(self.paddingEntry, font =('Segoe UI',10))
         self.NomClient.place(relx=0.00,rely=0.1,relwidth=0.99, height=26)
+        self.NomClient['values']=data
         self.NomClient.bind("<<ComboboxSelected>>")
 
         self.NumVente = Label(self.VenteForm, text='Num Vente',font =('Segoe UI',10),fg='#adabab',bg='white')
@@ -142,8 +169,10 @@ class GestionVente :
         self.numberInput=0
 
         def AddVente():
-            if(self.numVente.get()!="" or self.NomClient.get()!="" or self.numFact.get()!=""):
+            if(self.NomClient.get()!=""):
                 if len(self.listeArtticle)!=0:
+                    self.transaction_ajout_facture(self.NomClient.get().split('|')[0])
+                    
                     showinfo(nom[0],'Succes')
                 else :
                     showwarning(nom[0],'Veuillez ajouter les produits')
@@ -195,7 +224,9 @@ class GestionVente :
 
         y=0
         #Affichage des ventes dans le tableau
-        data=self.FakeData.dataArticleDisponible()
+        fact=Facture_back('')
+        
+        data=fact.get_all_fact(self.curseur)[1]
         t=0.1
         a=1
         for item in data:
@@ -306,25 +337,25 @@ class GestionVente :
         liste1=[]
         index=0
         y=0
-        a=1
+        a=0
         #if (len(self.listeArtticle)<5):
 
         for item in (self.listeArtticle):
-
-            if a==1:
+            print(item)
+            if a<1:
 
                 self.label = Frame(self.canvas, bg='white',height=13,width=380)
                 self.label.place(relx=0.02, rely=0, relwidth=1, relheight=0.1)
 
-                self.Idlab=Label(self.label,font =('Segoe UI',10),text='OO1')
+                self.Idlab=Label(self.label,font =('Segoe UI',10),text="")
                 self.Idlab.place(relx=0.0,rely=0.0,relwidth=0.28, relheight=0.7)
                 self.Idlab.bind('<Double-Button-1>', lambda event: self.SupprimerproduitSurDetails(0))
-                self.nomArt=Label(self.label,font =('Segoe UI',10),bg='white',text='biscuit')
+                self.nomArt=Label(self.label,font =('Segoe UI',10),bg='white',text="")
                 self.nomArt.place(relx=0.29,rely=0.0,relwidth=0.39, relheight=0.7)
 
-                self.Qnt=Label(self.label,font =('Segoe UI',10),bg='white',text='10')
+                self.Qnt=Label(self.label,font =('Segoe UI',10),bg='white',text="")
                 self.Qnt.place(relx=0.69,rely=0.0,relwidth=0.16, relheight=0.7)
-                self.Prix=Label(self.label,font =('Segoe UI',10),bg='white',text='200')
+                self.Prix=Label(self.label,font =('Segoe UI',10),bg='white',text='')
                 self.Prix.place(relx=0.85,rely=0.0,relwidth=0.16, relheight=0.7)
 
                 self.ligne=Frame(self.label,bg='#d6d4d4',height=-20).place(x=0, rely=0.9,relwidth=1)
@@ -336,13 +367,13 @@ class GestionVente :
                 self.label = Frame(self.canvas, bg='white',height=40,width=380)
                 self.label.place(relx=0.02, rely=0, relwidth=1, relheight=0.1)
 
-                self.Idlab=Label(self.label,font =('Segoe UI',10),text='OO1')
+                self.Idlab=Label(self.label,font =('Segoe UI',10),text=item[0])
                 self.Idlab.place(relx=0.0,rely=0.0,relwidth=0.28, relheight=0.7)
                 self.Idlab.bind('<Double-Button-1>', lambda event: self.SupprimerproduitSurDetails(0))
-                self.nomArt=Label(self.label,font =('Segoe UI',10),bg='white',text='biscuit')
+                self.nomArt=Label(self.label,font =('Segoe UI',10),bg='white',text=item[1])
                 self.nomArt.place(relx=0.29,rely=0.0,relwidth=0.39, relheight=0.7)
 
-                self.Qnt=Label(self.label,font =('Segoe UI',10),bg='white',text='10')
+                self.Qnt=Label(self.label,font =('Segoe UI',10),bg='white',text=item[2])
                 self.Qnt.place(relx=0.69,rely=0.0,relwidth=0.16, relheight=0.7)
                 self.Prix=Label(self.label,font =('Segoe UI',10),bg='white',text='200')
                 self.Prix.place(relx=0.85,rely=0.0,relwidth=0.16, relheight=0.7)
@@ -353,18 +384,18 @@ class GestionVente :
                 window_id = self.canvas.create_window(20, y, anchor=W, window=self.label)  # Adjust x-position (20 here) as needed
                 y += self.label.winfo_reqheight() + 5
 
-                a=0
+                a=+1
             else :
                 self.label = Frame(self.canvas, bg='white',height=40,width=380)
                 self.label.place(relx=0.02, rely=0, relwidth=1, relheight=0.1)
 
-                self.Idlab=Label(self.label,font =('Segoe UI',10),text='OO1')
+                self.Idlab=Label(self.label,font =('Segoe UI',10),text=item[0])
                 self.Idlab.place(relx=0.0,rely=0.0,relwidth=0.28, relheight=0.7)
                 self.Idlab.bind('<Double-Button-1>', lambda event: self.SupprimerproduitSurDetails(0))
-                self.nomArt=Label(self.label,font =('Segoe UI',10),bg='white',text='biscuit')
+                self.nomArt=Label(self.label,font =('Segoe UI',10),bg='white',text=item[1])
                 self.nomArt.place(relx=0.29,rely=0.0,relwidth=0.39, relheight=0.7)
 
-                self.Qnt=Label(self.label,font =('Segoe UI',10),bg='white',text='10')
+                self.Qnt=Label(self.label,font =('Segoe UI',10),bg='white',text=item[2])
                 self.Qnt.place(relx=0.69,rely=0.0,relwidth=0.16, relheight=0.7)
                 self.Prix=Label(self.label,font =('Segoe UI',10),bg='white',text='200')
                 self.Prix.place(relx=0.85,rely=0.0,relwidth=0.16, relheight=0.7)
@@ -387,14 +418,16 @@ class GestionVente :
     def ViderChamps(self):
         self.inputID.delete(0,END)
         self.nomArticle.delete(0,END)
-        self.inputQnt.delete(0,END)
+        self.inputQnt.delete(0,END) 
 
     #Fonction d'ajout d'articles
     def AddArticle(self):
         n=self.infosApp.Configuration(self)
-        if(self.inputID.get()!="" or self.nomArticle.get()!="" or self.inputQnt.get()!="" ):
+        if(self.inputID.get()!=""  or self.inputQnt.get()!="" ):
             if self.verification.Verification(self.inputQnt.get()):
-                self.listeArtticle.append([self.inputID.get(),self.nomArticle.get(),self.inputQnt.get()])
+                self.listeArtticle.append([self.inputID.get().split("|")[0],self.inputID.get().split('|')[1],self.inputQnt.get()])
+                #effqcer l'article de la liste2
+                self.listeArtticle2.remove(self.inputID.get())
                 self.actualiser()
                 self.ViderChamps()
             else :
@@ -402,9 +435,82 @@ class GestionVente :
 
         else :
             showwarning(n[0],'Veuillez remplir tout les champs')
+    def transaction_ajout_facture(self,client_id):
+        print('client',client_id)
+        fact=Facture_back(client_id)
+        # start transactiom 
+        self.db.db.autocommit=False
+        self.db.db.start_transaction()
+        if fact.add_fact(self.curseur):
+            self.curseur.execute('select max(id_facture) from tb_facture')
+            fact_id = self.curseur.fetchone()[0]
+            print('facture',fact_id)
+
+            #enregistrer chaque vente en regardant le PV et en implementant la logique Lifo aux stocks
+            for item in self.listeArtticle:
+                if self.db.db.autocommit==False:
+                                       #recuperer le prix de vente
+                    prix=Prix_vente_back("",0).get_last_pv(self.curseur,item[0])[1][0][0]
+                    #voir le stiock à utilisé
+                    print("le prix est",prix)
+                    #verifier si la quantite dispo est suffisante pour la vente si elle est petite on va chercher dans les autres stock
+                    def chercher_stock(id_produit):
+                        #print(id_produit)
+
+                    
+                        stock=Stock_back("",0,0).get_stock_dispo_id(self.curseur,id_produit)[1][0]
+                        #verifier si le stock est suffisant
+                        #print("le stock est",stock[1])
+                        
+                        
+                        quantite_info=Stock_back("",0,0).get_stock_ecoule(self.curseur,stock[1])[1][0]
+                        print("la quantite info est",quantite_info)
+
+                        quantite_dispo=quantite_info[2]-quantite_info[3]
+                        #print("la quantite est",quantite_dispo)
+                        return quantite_dispo,stock[1]
+                        #verifier si la quantite dispo est suffisante pour la vente si elle est petite on va chercher dans les autres stock
+                    #verifier si le stock est suffisant dans une bouble jusqu'a ce que la quantite des produits demandé soit atteinte
+                    quantite_demande=int(item[2])
+                    quantite_dispo=chercher_stock(item[0])[0]
+                    stock=chercher_stock(item[0])[1]
+                    print("la quantite dispo est",quantite_dispo)
+                    #verifier si le stock est 
+                    while quantite_dispo<quantite_demande:
+                        #chercher dans les autres stock
+                        
+                        vente=Vente_back(item[0],stock,fact_id,prix,quantite_demande)
+                        print(item[0],stock,fact_id,prix,quantite_demande)
+                        vente.add_vente(self.curseur)
+                        
+                        print(quantite_demande,quantite_dispo)
+                        print("chercher dans les autres stock")
+                        quantite_demande=quantite_demande-quantite_dispo
+                        
+                        
+                        
+                        quantite_dispo=chercher_stock(item[0])[0]
+                        
+                        print("la quantite dispo est",quantite_dispo)
+                        stock=chercher_stock(item[0])[1]
+                        
+                    
+                    
+                        
+                    
     
+                    
+                    
+                    
+                   
 
-
+                    
+                 
+            return True
+        else:
+            self.db.db.rollback()
+            self.db.db.autocommit=True
+            return False
     def ShowForm(self):
         if len(self.listeArtticle)==0:
             self.bouton_Plus= Button(self.VenteForm,bg='#ebf4f5',text='Ajouter',relief='flat', font =('Segoe UI',9),fg='#adabab',command=self.AddArticle)
@@ -415,9 +521,38 @@ class GestionVente :
 
             self.ContLigne=Frame(self.articleContent,bg='white')
             self.ContLigne.place(x=0, rely=0.00,relwidth=1,height=33)
+            #####
+
+            self.inputID
+                    
+                    
+    
+
+
+        
+        
+        
+        pass
+    
+
+    def onselect(self,evt):
+        values=self.inputID.get()
+        
+    def ShowForm(self):
+        if len(self.listeArtticle)==0:
+            self.bouton_Plus= Button(self.VenteForm,bg='#ebf4f5',text='Ajouter',relief='flat', font =('Segoe UI',9),fg='#adabab',command=self.AddArticle)
+            self.bouton_Plus.place(relx=0.81,rely=0.38,relwidth=0.11, height=26)
+
+            self.articleContent=Frame(self.VenteForm,bg='white')
+            self.articleContent.place(relx=0.02, rely=0.46,relwidth=0.9,relheight=2)
+
+            self.ContLigne=Frame(self.articleContent,bg='white')
+            self.ContLigne.place(x=0, rely=0.00,relwidth=1,height=33)
+            #####
 
             self.inputID=ttk.Combobox(self.ContLigne,font =('Segoe UI',10))
             self.inputID.place(relx=0.0,rely=0.0,relwidth=0.28, height=26)
+            self.inputID['values']=self.listeArtticle2
 
             self.nomArticle=Entry(self.ContLigne,font =('Segoe UI',10),bg='white',relief='flat')
             self.nomArticle.place(relx=0.29,rely=0.0,relwidth=0.39, height=26)
@@ -447,4 +582,4 @@ class GestionVente :
 
 
 
-
+# 

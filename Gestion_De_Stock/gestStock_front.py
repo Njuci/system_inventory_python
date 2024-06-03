@@ -232,8 +232,8 @@ class GestionStock :
         self.title = Label(self.tabStockActuel, text="Date entrée", font=('Segoe UI ', 9), fg='#416b70', bg='white').place(relx=0.03, rely=0.02, relwidth=0.2)
         self.title = Label(self.tabStockActuel, text="Quantité ", font=('Segoe UI ', 9), fg='#416b70', bg='white').place(relx=0.24, rely=0.02, relwidth=0.2)
 
-        self.title = Label(self.tabStockActuel, text="Status", font=('Segoe UI ', 9), fg='#416b70', bg='white').place(relx=0.45, rely=0.02, relwidth=0.2)
-        self.title = Label(self.tabStockActuel, text="DateSortie", font=('Segoe UI ', 9), fg='#416b70', bg='white').place(relx=0.66, rely=0.02, relwidth=0.2)
+        self.title = Label(self.tabStockActuel, text="Date de sortie", font=('Segoe UI ', 7), fg='#416b70', bg='white').place(relx=0.45, rely=0.02, relwidth=0.2)
+        self.title = Label(self.tabStockActuel, text="Stock Sortie", font=('Segoe UI ', 7), fg='#416b70', bg='white').place(relx=0.66, rely=0.02, relwidth=0.2)
 
         # Loop to generate stock list items dynamically
         t = 0.1  # Initial vertical position for the first item
