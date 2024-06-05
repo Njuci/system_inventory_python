@@ -171,11 +171,15 @@ class GestionVente :
         def AddVente():
             if(self.NomClient.get()!=""):
                 if len(self.listeArtticle)!=0:
-                    from ajout_ventes import InventoryManagementSystem
+                    """                    from ajout_ventes import InventoryManagementSystem
                     fact=InventoryManagementSystem(self.db.db,self.listeArtticle)
+                    
                     if fact.add_invoice(self.NomClient.get().split('|')[0]):
                         self.listeArtticle=[]
-                        self.db.dn.autocommit=True
+                        self.db.dn.autocommit=True"""
+                    self.transaction_ajout_facture2(self.NomClient.get().split('|')[0])
+                    
+
                     
                     
                     showinfo(nom[0],'Succes')
@@ -453,7 +457,7 @@ class GestionVente :
 
             #enregistrer chaque vente en regardant le PV et en implementant la logique Lifo aux stocks
             for item in self.listeArtticle:
-                if self.db.db.autocommit==True:
+                if self.db.db.autocommit==False:
                                        #recuperer le prix de vente
                                        
                     try:
@@ -506,6 +510,7 @@ class GestionVente :
                             while quantite_dispo < quantite_demande:
                                     # Search for stock with enough quantity
                                 quantite_dispo, stock = chercher_stock(item[0])
+                                print("la quantite dispo est",quantite_dispo)
                                 print("la quantite dispo est",quantite_dispo)
                                 print("la quantite demandée est",quantite_demande)
                                 print("le stock est",stock)
@@ -613,3 +618,78 @@ class GestionVente :
 
 
 # 
+    def transaction_ajout_facture2(self, client_id):
+        print('client', client_id)
+        fact = Facture_back(client_id)
+        try:
+            # Start transaction
+            self.db.db.autocommit = False
+            self.db.db.start_transaction()
+            if fact.add_fact(self.curseur):
+                self.curseur.execute('SELECT MAX(id_facture) FROM tb_facture')
+                fact_id = self.curseur.fetchone()[0]
+                print('facture', fact_id)
+
+                # Record each sale
+                for item in self.listeArtticle:
+                    # Retrieve the selling price
+                    prix = Prix_vente_back("", 0).get_last_pv(self.curseur, item[0])[1][0][0]
+                    print("le prix est", prix)
+
+                    # Verify stock availability
+                    quantite_demande = int(item[2])
+                    quantite_dispo, stock =self.chercher_stock_fifo(item[0])
+                    print("la quantite dispo est", quantite_dispo)
+
+                    # Check if stock is sufficient
+                    if quantite_dispo >= quantite_demande:
+                        vente = Vente_back(item[0], stock, fact_id, prix, quantite_demande)
+                        vente.add_vente(self.curseur)
+                        print(item[0], stock, fact_id, prix, quantite_demande)
+                    else:
+                        # Handle insufficient stock using FIFO
+                        while quantite_dispo < quantite_demande:
+                            vente = Vente_back(item[0], stock, fact_id, prix, quantite_dispo)
+                            vente.add_vente(self.curseur)
+                            quantite_demande -= quantite_dispo
+                            quantite_dispo, stock = self.chercher_stock_fifo(item[0])
+                            if stock is None:
+                                break  # No more stock available
+                            else:
+                                vente = Vente_back(item[0], stock, fact_id, prix, quantite_demande)
+                                vente.add_vente(self.curseur)
+
+                        if quantite_demande > 0:
+                            print("Stock insuffisant pour l'article", item[0])
+
+                # Commit transaction
+                self.db.db.commit()
+                self.listeArtticle = []
+                return True
+            else:
+                return False  # Provide a reason for failure
+        except Exception as e:
+            # Rollback in case of error
+            self.db.db.rollback()
+            showwarning("Erreur", "Erreur lors de l'enregistrement de la facture: " + str(e))
+            return False
+        finally:
+            # Ensure autocommit is reset
+            self.db.db.autocommit = True
+
+    # Define the chercher_stock_fifo function outside the loop
+    def chercher_stock_fifo(self, id_produit):
+        # Implement FIFO logic here
+        # ...
+        stock=Stock_back("",0,0).get_stock_dispo_id(self.curseur,id_produit)[1][0]
+                            #verifier si le stock est suffisant
+                            #print("le stock est",stock[1])
+                            
+                            
+        quantite_info=Stock_back("",0,0).get_stock_ecoule(self.curseur,stock[1])[1][0]
+        print("la quantite info est",quantite_info)
+
+        quantite_dispo=quantite_info[2]-quantite_info[3]
+                            #print("la quantite est",quantite_dispo)
+        return quantite_dispo,stock[1]
+                            
