@@ -444,7 +444,7 @@ class GestionVente :
         print('client',client_id)
         fact=Facture_back(client_id)
         # start transactiom 
-        self.db.db.autocommit=True
+        self.db.db.autocommit=False
         self.db.db.start_transaction()
         if fact.add_fact(self.curseur):
             self.curseur.execute('select max(id_facture) from tb_facture')

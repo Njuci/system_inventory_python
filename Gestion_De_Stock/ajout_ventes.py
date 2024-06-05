@@ -28,7 +28,9 @@ class InventoryManagementSystem:
         invoice = Facture_back(client_id)
         self.start_transaction()
         if invoice.add_fact(self.db.cursor()):
-            fact_id = self.get_last_invoice_id()
+            
+            self.db.cursor().execute('select max(id_facture) from tb_facture')
+            fact_id = self.db.cursor().fetchone()[0]
             print('Invoice:', fact_id)
             try:
                 for item in self.listeArtticle:
@@ -45,7 +47,7 @@ class InventoryManagementSystem:
 
     def get_last_invoice_id(self):
         self.db.cursor().execute('SELECT MAX(id_facture) FROM tb_facture')
-        return self.db.cursor().fetchone()[0]
+        return self.db.cursor().fetchall()[0][0]
 
     def process_item(self, item, fact_id):
         prix = Prix_vente_back("", 0).get_last_pv(self.db.cursor(), item[0])[1][0][0]
