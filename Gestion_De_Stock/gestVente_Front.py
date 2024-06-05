@@ -171,7 +171,12 @@ class GestionVente :
         def AddVente():
             if(self.NomClient.get()!=""):
                 if len(self.listeArtticle)!=0:
-                    self.transaction_ajout_facture(self.NomClient.get().split('|')[0])
+                    from ajout_ventes import InventoryManagementSystem
+                    fact=InventoryManagementSystem(self.db.db,self.listeArtticle)
+                    if fact.add_invoice(self.NomClient.get().split('|')[0]):
+                        self.listeArtticle=[]
+                        self.db.dn.autocommit=True
+                    
                     
                     showinfo(nom[0],'Succes')
                 else :
@@ -439,7 +444,7 @@ class GestionVente :
         print('client',client_id)
         fact=Facture_back(client_id)
         # start transactiom 
-        self.db.db.autocommit=False
+        self.db.db.autocommit=True
         self.db.db.start_transaction()
         if fact.add_fact(self.curseur):
             self.curseur.execute('select max(id_facture) from tb_facture')
@@ -448,9 +453,16 @@ class GestionVente :
 
             #enregistrer chaque vente en regardant le PV et en implementant la logique Lifo aux stocks
             for item in self.listeArtticle:
-                if self.db.db.autocommit==False:
+                if self.db.db.autocommit==True:
                                        #recuperer le prix de vente
-                    prix=Prix_vente_back("",0).get_last_pv(self.curseur,item[0])[1][0][0]
+                                       
+                    try:
+                        prix=Prix_vente_back("",0).get_last_pv(self.curseur,item[0])[1][0][0]
+                        prix_test=True
+                    except Exception as e:
+                        showwarning("Erreur","pas de prix fixé "+str(e))
+                        prix_test=False
+                       
                     #voir le stiock à utilisé
                     print("le prix est",prix)
                     #verifier si la quantite dispo est suffisante pour la vente si elle est petite on va chercher dans les autres stock
@@ -471,45 +483,63 @@ class GestionVente :
                         return quantite_dispo,stock[1]
                         #verifier si la quantite dispo est suffisante pour la vente si elle est petite on va chercher dans les autres stock
                     #verifier si le stock est suffisant dans une bouble jusqu'a ce que la quantite des produits demandé soit atteinte
-                    quantite_demande=int(item[2])
-                    quantite_dispo=chercher_stock(item[0])[0]
-                    stock=chercher_stock(item[0])[1]
-                    print("la quantite dispo est",quantite_dispo)
-                    #verifier si le stock est 
-                    while quantite_dispo<quantite_demande:
-                        #chercher dans les autres stock
-                        
-                        vente=Vente_back(item[0],stock,fact_id,prix,quantite_demande)
-                        print(item[0],stock,fact_id,prix,quantite_demande)
-                        vente.add_vente(self.curseur)
-                        
-                        print(quantite_demande,quantite_dispo)
-                        print("chercher dans les autres stock")
-                        quantite_demande=quantite_demande-quantite_dispo
-                        
-                        
-                        
+                    if prix_test:
+                        self.db.db.autocommit=True
+                        quantite_demande=int(item[2])
                         quantite_dispo=chercher_stock(item[0])[0]
-                        
-                        print("la quantite dispo est",quantite_dispo)
                         stock=chercher_stock(item[0])[1]
+                        print("la quantite dispo est",quantite_dispo)
+                        #verifier si le stock est 
+                        if quantite_dispo>=quantite_demande:
+                            vente=Vente_back(item[0],stock,fact_id,prix,quantite_demande)
+                            
+                            self.db.db.commit()
+                            print(item[0],stock,fact_id,prix,quantite_demande)
+                            vente.add_vente(self.curseur)
+                            print("la quantite dispo est",quantite_dispo)
+                            print("la quantite demandée est",quantite_demande)
+                            print("le stock est",stock)
+                            
+                        else:
                         
-                    
-                    
-                        
-                    
-    
-                    
-                    
-                    
+                            # If the available quantity is not enough, search in other stocks
+                            while quantite_dispo < quantite_demande:
+                                    # Search for stock with enough quantity
+                                quantite_dispo, stock = chercher_stock(item[0])
+                                print("la quantite dispo est",quantite_dispo)
+                                print("la quantite demandée est",quantite_demande)
+                                print("le stock est",stock)
+                                    # Check if there is enough quantity in the stock
+                                if quantite_dispo >= quantite_demande:
+                                    vente = Vente_back(item[0], stock, fact_id, prix, quantite_demande)
+                                    vente.add_vente(self.curseur)
+                                    
+                                    self.db.db.commit()
+                                else:
+                                    # Reduce the quantity demanded by the quantity available in the stock
+                                    quantite_demande -= quantite_dispo
+                                # Continue searching in other stocks
+                            else:
+                                # If there are still unsatisfied items, stop recording for this sale and continue with the remaining items in self.listeArtticle
+                                break
+                    else:   
+                        break
                    
-
+                else:
                     
+                    self.db.db.rollback()
+                    self.db.db.autocommit = True
+                    showwarning("Erreur", "Erreur lors de l'enregistrement de la facture")
+                    break
+                self.db.db.autocommite=False
+            self.db.db.commit()
+            self.db.db.autocommit = True
+            self.listeArtticle = []
+            
                  
             return True
         else:
-            self.db.db.rollback()
-            self.db.db.autocommit=True
+            
             return False
     def ShowForm(self):
         if len(self.listeArtticle)==0:
