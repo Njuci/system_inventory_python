@@ -64,7 +64,7 @@ class GestionVente :
         #les filtres 
         self.SearchClient = Label(self.RightContener, text='Filtre :',font =('Segoe UI',10),fg='#adabab',bg='#ebf4f5')
         self.SearchClient.place(relx=0.3,rely=0.12)
-        self.bouton_Plus= Button(self.RightContener,bg='#416b70',text='Toutes le ventes',relief='flat', font =('Segoe UI',9),fg='white',command=self.ShowForm)
+        self.bouton_Plus= Button(self.RightContener,bg='#416b70',text='Toutes le ventes',relief='flat', font =('Segoe UI',9),fg='white',command=self.On_click_button)
         self.bouton_Plus.place(relx=0.4,rely=0.12,relwidth=0.22, height=26)
 
         self.ListeDateVente=ttk.Combobox(self.RightContener, font =('Segoe UI',10))
@@ -84,6 +84,10 @@ class GestionVente :
         self.listeArtticle=[]
     def On_element_selected(self,event):
         self.filtre_date=True
+        self.TableauArticles(530)
+    
+    def On_click_button(self):
+        self.filtre_date=False
         self.TableauArticles(530)
 
     def genererRapportJournalier(self):
