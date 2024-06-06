@@ -60,7 +60,7 @@ class GestionVente :
 
         self.bouton_Rapport= Button(self.RightContener,bg='#416b70',text='Imprimer',relief='flat', font =('Segoe UI',9),fg='white',command=self.genererRapportJournalier)
         self.bouton_Rapport.place(relx=0.8,rely=0.02,relwidth=0.22, height=26)
-
+        self.filtre_date=False
         #les filtres 
         self.SearchClient = Label(self.RightContener, text='Filtre :',font =('Segoe UI',10),fg='#adabab',bg='#ebf4f5')
         self.SearchClient.place(relx=0.3,rely=0.12)
@@ -69,12 +69,22 @@ class GestionVente :
 
         self.ListeDateVente=ttk.Combobox(self.RightContener, font =('Segoe UI',10))
         self.ListeDateVente.place(relx=0.7,rely=0.12,relwidth=0.3, height=26)
-        self.ListeDateVente.bind("<<ComboboxSelected>>")
+        fact=Facture_back('')
+        data=fact.get_distinct_date(self.curseur)[1]
+        listeDate=[]
+        for i in data:
+            listeDate.append(i[0])
+        self.ListeDateVente['values']=listeDate 
+        self.ListeDateVente.bind("<<ComboboxSelected>>",self.On_element_selected)
 
          #----------------------------Tab section -------------------------------
+        
 
         self.TableauArticles(530)
         self.listeArtticle=[]
+    def On_element_selected(self,event):
+        self.filtre_date=True
+        self.TableauArticles(530)
 
     def genererRapportJournalier(self):
         self.RapportPDF.genererRapportJournalier([])
@@ -178,7 +188,10 @@ class GestionVente :
                         self.listeArtticle=[]
                         self.db.dn.autocommit=True"""
                     self.transaction_ajout_facture2(self.NomClient.get().split('|')[0])
+                    self.FormulaireVente()
+                    self.TableauArticles(530)
                     
+                                
 
                     
                     
@@ -233,9 +246,14 @@ class GestionVente :
 
         y=0
         #Affichage des ventes dans le tableau
-        fact=Facture_back('')
-        
-        data=fact.get_all_fact(self.curseur)[1]
+        if self.filtre_date:
+            fact=Facture_back('')
+            data=fact.get_fact_by_date(self.curseur,self.ListeDateVente.get())[1]
+        else:
+                
+            fact=Facture_back('')
+            
+            data=fact.get_all_fact(self.curseur)[1]
         t=0.1
         a=1
         for item in data:

@@ -230,6 +230,22 @@ SELECT
     sd.id_produit,
     MIN(sd.id_stock) AS id_stock_utiliser
 FROM 
-    StocksDisponibles sd
+    StocksDisponibles sd where sd.id_produit='PRO0000001'
 GROUP BY 
     sd.id_produit;
+
+
+SELECT     tb_produit.designation_produit, 
+                                    tb_stock.date_entree, 
+                                    tb_stock.nombre_piece, 
+                                    COALESCE(SUM(tb_vente.quantite), 0) AS quantite_vendue
+                                FROM 
+                                    tb_stock
+                                JOIN 
+                                    tb_produit ON tb_stock.id_produit = tb_produit.id_produit
+                                LEFT JOIN 
+                                    tb_vente ON tb_stock.id_stock = tb_vente.id_stock
+                                WHERE 
+                                    tb_stock.id_stock = 'STO0000006'
+                                GROUP BY 
+                                    tb_produit.designation_produit, tb_stock.date_entree, tb_stock.nombre_piece;

@@ -35,10 +35,27 @@ class Facture_back:
     #get_client
     def get_all_fact(self,curseur):
         try:
-            curseur.execute('select date_format(tb_facture.date_facturation,\'%d-%m-%y\')as date_facturation,tb_client.nom_cli from tb_client inner join tb_facture on tb_client.id_client=tb_facture.id_client')
+            curseur.execute('select date_format(tb_facture.date_facturation,\'%d-%m-%Y\')as date_facturation,tb_client.nom_cli from tb_client inner join tb_facture on tb_client.id_client=tb_facture.id_client')
             return True,curseur.fetchall()
         
         except Exception as e:
             messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
           
+            return False,[]
+    #get distinct date 
+    
+    def get_distinct_date(self,curseur):
+        try:
+            curseur.execute('SELECT DISTINCT date_format(date_facturation,\'%d-%m-%Y\') as date_facturation FROM tb_facture')
+            return True,curseur.fetchall()
+        except Exception as e:
+            messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
+            return False,[]
+    #get facture by date
+    def get_fact_by_date(self,curseur,date):
+        try:
+            curseur.execute('SELECT date_format(tb_facture.date_facturation,\'%d-%m-%Y\')as date_facturation,tb_client.nom_cli  FROM tb_facture INNER JOIN tb_client ON tb_facture.id_client=tb_client.id_client WHERE date_format(date_facturation,\'%d-%m-%Y\')=%s',(date,))
+            return True,curseur.fetchall()
+        except Exception as e:
+            messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
             return False,[]
