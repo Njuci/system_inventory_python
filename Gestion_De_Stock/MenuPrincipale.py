@@ -19,6 +19,7 @@ class MenuPrincipaleFrontend:
         self.fen.geometry("1200x600")
         self.fen.resizable(width=True,height=True)
         self.compte=compte
+        self.con=con
         #les instances de la classe
         #Selection de l'annee active
 
@@ -49,14 +50,16 @@ class MenuPrincipaleFrontend:
         self.GestionStock=Frame(self.fen,bg='#ebf4f5')
         self.ArticleContent.place(relx=0.0,rely=0.17,relheight=0.9,relwidth=1)
         self.ArticleContent.place_forget()
+
+        self.CreationMenu()
        
 
-
-        Menu1=Dashboard(self.DashBoardContent,con)
-        Menu2=GestionVente(self.VenteContent,con)
-        Menu3=GestionClient(self.ClientContent,con)
-        Menu4=GestionArticle(self.ArticleContent,con)
-        Menu5=GestionStock(self.GestionStock,con)
+    def CreationMenu(self):
+        Menu1=Dashboard(self.DashBoardContent,self.con)
+        Menu2=GestionVente(self.VenteContent,self.con)
+        Menu3=GestionClient(self.ClientContent,self.con)
+        Menu4=GestionArticle(self.ArticleContent,self.con)
+        Menu5=GestionStock(self.GestionStock,self.con)
 
         self.etatInitialBtn()
 
@@ -83,6 +86,7 @@ class MenuPrincipaleFrontend:
         self.etatInitialBtn()
         self.DashBoardContent_btn= Button(self.ButtonContaineur,bg='white',text='DASHBOARD',fg='#416b70',relief="flat", font = ('Segoe UI bold',9),command=self.AfficherSlide1)
         self.DashBoardContent_btn.place(relx=0.0,y=5, relwidth=0.18,height=40)
+        self.CreationMenu()
         self.cacherSlide()
         self.DashBoardContent.place(relx=0.0,rely=0.17,relheight=0.9,relwidth=1)
 
@@ -91,6 +95,7 @@ class MenuPrincipaleFrontend:
         self.etatInitialBtn()
         self.VenteContent_btn= Button(self.ButtonContaineur,bg='white',text='GESTION VENTES',fg='#416b70',relief="flat", font = ('Segoe UI bold',9),command=self.AfficherSlide2)
         self.VenteContent_btn.place(relx=0.20,y=5, relwidth=0.18,height=40)
+        self.CreationMenu()
         self.cacherSlide()
         self.VenteContent.place(relx=0.0,rely=0.17,relheight=0.9,relwidth=1)
 
@@ -98,6 +103,7 @@ class MenuPrincipaleFrontend:
         self.etatInitialBtn()
         self.ClientContent_btn= Button(self.ButtonContaineur,bg='white',text='GESTION CLIENTS',fg='#416b70',relief="flat", font = ('Segoe UI bold',9),command=self.AfficherSlide3)
         self.ClientContent_btn.place(relx=0.40,y=5, relwidth=0.18,height=40)
+        self.CreationMenu()
         self.cacherSlide()
         self.ClientContent.place(relx=0.0,rely=0.17,relheight=0.9,relwidth=1)
     
@@ -105,6 +111,7 @@ class MenuPrincipaleFrontend:
         self.etatInitialBtn()
         self.ArticleContent_btn= Button(self.ButtonContaineur,bg='white',text='GESTION ARTICLES',fg='#416b70',relief="flat", font = ('Segoe UI bold',9),command=self.AfficherSlide4)
         self.ArticleContent_btn.place(relx=0.60,y=5, relwidth=0.18,height=40)
+        self.CreationMenu()
         self.cacherSlide()
         self.ArticleContent.place(relx=0.0,rely=0.17,relheight=0.9,relwidth=1)
     
@@ -112,6 +119,7 @@ class MenuPrincipaleFrontend:
         self.etatInitialBtn()
         self.GestStock_btn= Button(self.ButtonContaineur,bg='white',text='GESTION STOCK',fg='#416b70',relief="flat", font = ('Segoe UI bold',9),command=self.AfficherSlide5)
         self.GestStock_btn.place(relx=0.80,y=5, relwidth=0.18,height=40)
+        self.CreationMenu()
         self.cacherSlide()
         self.GestionStock.place(relx=0.0,rely=0.17,relheight=0.9,relwidth=1)
 
