@@ -46,7 +46,7 @@ class Vente_back:
     #delete vente
     def del_vente(self,curseur,id_vente):
         try:
-            curseur.execute('delete from tb_vente where id=%s',(id_vente,))
+            curseur.execute('delete from tb_vente where id_vente=%s',(id_vente,))
             return True
         except Exception as e:
             messagebox.showerror('Erreur',f'Erreur lors de la suppression  de la vente  à la base de données : {e}')

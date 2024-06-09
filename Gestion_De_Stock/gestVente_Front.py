@@ -26,13 +26,16 @@ class GestionVente :
         self.verification=EntryVerification()
         #Formulaire de vente
         self.listeArtticle=[]
-        self.listeArticleFacture=[['gre','fgr','200','ggg']]
+        self.listeArticleFacture=[]
         self.FrameFacture=0
         self.EtatFacture=False
         self.FormulaireVente()
+        self.select_facture=''
+        #liste des articles supprimé
+        self.listeArticleSupprime=[]
         self.listeArtticle2=[]
-        self.listeChoix=[]
-
+        self.listeChoix=[] 
+        self.infos_detail_facture={}
         prod=Product_back('')
         data=prod.get_all_produit(self.curseur)[1]
         product_list=[]
@@ -208,10 +211,32 @@ class GestionVente :
 #-------------------------------------------Visualisation de vente ------------------------------
     def SupprimerProduits(self,index):
             result=askyesno("Confirmation","Voulez-vous vraiment supprimer ce produit sur cette Facture ?")
+            #initialisation de la liste des produits
+            
+            
+            info_total=Facture_back('').get_total_fact(self.curseur,self.select_facture)
+            print(info_total)
+            if info_total[0] and len(info_total[1])!=0:
+                total=info_total
+            else:
+                total=(True, [('', 0.0)])
+                
+                
+            print(total)
+            inf=Facture_back('').get_client_by_id_fact(self.curseur,self.select_facture)[1][0]
+            print(inf)
+            self.infos_detail_facture['num_fac']=self.select_facture
+            self.infos_detail_facture['date_fac']=inf[1]
+            self.infos_detail_facture['nom_client']=inf[0]      
+            self.infos_detail_facture['total']=total[1][0][1]
+            
+            
             if result :
                 print(index)
+                self.listeArticleSupprime.append(self.listeArticleFacture[index])
                 self.listeArticleFacture.pop(index)
                 self.EtatFacture=True
+                
                 self.FormulaireModificationVente()
 
 # La fonction permettant de verifier s'il y a eu des modifications sur la facture 
@@ -219,10 +244,20 @@ class GestionVente :
         if self.EtatFacture :
             result=askyesno("Confirmation","Voulez-vous enregsitrer les modifications  ?")
             if result :
-                # veuillez supprimer tous les produits sur la facture et ajouter de nouveau les produits qui se 
-                # trouvent dans la liste apres modification  voici la liste self.listeArticleFacture
-                pass
+                supr_vente=Vente_back('','','','','')
+                
+                if len(self.listeArticleSupprime)!=0:
+                    for i in self.listeArticleSupprime:
+                        if supr_vente.del_vente(self.curseur,i[0]):
+                            f=True
+                showinfo('Confirmation','Modification enregistrée')          
+                
+                
+                
             else :
+                
+                
+                
                 self.FormulaireVente()
                 self.EtatFacture=False
         else :
@@ -287,12 +322,12 @@ class GestionVente :
 
                     self.Idlab=Label(self.label,font =('Segoe UI',10),text=item[1],bg='white')
                     self.Idlab.place(relx=0.0,rely=0.0,relwidth=0.35, relheight=0.7)
-                    self.nomArt=Label(self.label,font =('Segoe UI',10),bg='white',text=item[2])
+                    self.nomArt=Label(self.label,font =('Segoe UI',10),bg='white',text=item[3])
                     self.nomArt.place(relx=0.37,rely=0.0,relwidth=0.16, relheight=0.7)
 
-                    self.Qnt=Label(self.label,font =('Segoe UI',10),bg='white',text='200')
+                    self.Qnt=Label(self.label,font =('Segoe UI',10),bg='white',text=item[2])
                     self.Qnt.place(relx=0.54,rely=0.0,relwidth=0.16, relheight=0.7)
-                    self.Prix=Label(self.label,font =('Segoe UI',10),bg='white',text='200000')
+                    self.Prix=Label(self.label,font =('Segoe UI',10),bg='white',text=item[4])
                     self.Prix.place(relx=0.71,rely=0.0,relwidth=0.16, relheight=0.7)
 
                     self.Sup=Label(self.label,font =('Segoe UI',10),text="SUP",bg='red',fg="white")
@@ -313,12 +348,12 @@ class GestionVente :
 
                     self.Idlab=Label(self.label,font =('Segoe UI',10),text=item[1],bg='white')
                     self.Idlab.place(relx=0.0,rely=0.0,relwidth=0.35, relheight=0.7)
-                    self.nomArt=Label(self.label,font =('Segoe UI',10),bg='white',text=item[2])
+                    self.nomArt=Label(self.label,font =('Segoe UI',10),bg='white',text=item[3])
                     self.nomArt.place(relx=0.37,rely=0.0,relwidth=0.16, relheight=0.7)
 
-                    self.Qnt=Label(self.label,font =('Segoe UI',10),bg='white',text='200')
+                    self.Qnt=Label(self.label,font =('Segoe UI',10),bg='white',text=item[2])
                     self.Qnt.place(relx=0.54,rely=0.0,relwidth=0.16, relheight=0.7)
-                    self.Prix=Label(self.label,font =('Segoe UI',10),bg='white',text='200000')
+                    self.Prix=Label(self.label,font =('Segoe UI',10),bg='white',text=item[4])
                     self.Prix.place(relx=0.71,rely=0.0,relwidth=0.16, relheight=0.7)
 
                     self.Sup=Label(self.label,font =('Segoe UI',10),text="SUP",bg='red',fg="white")
@@ -347,44 +382,44 @@ class GestionVente :
         #Formulaire de ventes 
         self.VenteForm=Frame(self.fen,bg='white')
         self.VenteForm.place(x=20, rely=0.1,relwidth=0.4,relheight=0.8)
-
+ 
         #Barre de recherche
         self.SearchClient = Label(self.VenteForm, text='DETAILS VENTE ',bg='white',font = ('Segoe UI bold',12),fg='black')
         self.SearchClient.place(relx=0.02,rely=0.02,relwidth=1)
 
-        self.bouton_Imprimer= Button(self.VenteForm,bg='#416b70',text='Imprimer',relief='flat', font =('Segoe UI',9),fg='white',command=lambda:genererFacture())
+        self.bouton_Imprimer= Button(self.VenteForm,bg='#416b70',text='Imprimer',relief='flat', font =('Segoe UI',9),fg='white',command=lambda:self.genererFacture())
         self.bouton_Imprimer.place(relx=0.70,rely=0.02,relwidth=0.2, height=30)
 
 
         #Infos clients
-        self.SearchClient = Label(self.VenteForm, text='Numéro Vente',font =('Segoe UI',10),fg='black',bg='white')
+        self.SearchClient = Label(self.VenteForm, text='Numéro Facture',font =('Segoe UI',10),fg='black',bg='white')
         self.SearchClient.place(relx=0.02,rely=0.11)
 
-        self.NumFact = Label(self.VenteForm, text=': 0019389',font =('Segoe UI',10),fg='black',bg='white')
+        self.NumFact = Label(self.VenteForm, text=self.infos_detail_facture['num_fac'],font =('Segoe UI',10),fg='black',bg='white')
         self.NumFact.place(relx=0.3,rely=0.11)
 
         self.SearchClient = Label(self.VenteForm, text='Date vente',font =('Segoe UI',10),fg='black',bg='white')
         self.SearchClient.place(relx=0.02,rely=0.15)
 
-        self.DateFact = Label(self.VenteForm, text=': le 25 / 02 / 2003',font =('Segoe UI',10),fg='black',bg='white')
+        self.DateFact = Label(self.VenteForm, text=self.infos_detail_facture['date_fac'],font =('Segoe UI',10),fg='black',bg='white')
         self.DateFact.place(relx=0.3,rely=0.15)
 
         self.SearchClient = Label(self.VenteForm, text='Nom client',font =('Segoe UI',10),fg='black',bg='white')
         self.SearchClient.place(relx=0.02,rely=0.2)
 
-        self.NomCli = Label(self.VenteForm, text=': Jeremie Ndeke',font =('Segoe UI',10),fg='black',bg='white')
+        self.NomCli = Label(self.VenteForm, text=self.infos_detail_facture['nom_client'],font =('Segoe UI',10),fg='black',bg='white')
         self.NomCli.place(relx=0.3,rely=0.2)
 
         self.SearchClient = Label(self.VenteForm, text='Montan total',font =('Segoe UI',10),fg='black',bg='white')
         self.SearchClient.place(relx=0.02,rely=0.25)
 
-        self.NomCli = Label(self.VenteForm, text=': 200 000 Fc',font =('Segoe UI bold',14),fg='black',bg='white')
+        self.NomCli = Label(self.VenteForm, text=self.infos_detail_facture['total'],font =('Segoe UI bold',14),fg='black',bg='white')
         self.NomCli.place(relx=0.3,rely=0.25)
   
   
 
         #Buttons Actions
-        self.bouton_enregistrer= Button(self.VenteForm,bg='white',text='Enregistrer',relief='groove', font =('Segoe UI',9),fg='#416b70',command=lambda :AddVente())
+        self.bouton_enregistrer= Button(self.VenteForm,bg='white',text='Enregistrer',relief='groove', font =('Segoe UI',9),fg='#416b70',command=self.closeDetails)
         self.bouton_enregistrer.place(relx=0.28,rely=0.9,relwidth=0.2, height=30)
 
         self.bouton_Modifier= Button(self.VenteForm,bg='white',text='Retour',relief='groove', font =('Segoe UI',9),fg='#416b70',command=self.closeDetails)
@@ -406,7 +441,8 @@ class GestionVente :
 
         self.NumFact = Label(self.VenteForm, text='Prix T.',font =('Segoe UI',10),fg='#adabab',bg='white')
         self.NumFact.place(relx=0.67,rely=0.38,relwidth=0.14)
-
+       
+ 
         self.FrameFacture=self.VenteForm
         self.ActualiserDetails()
 
@@ -475,7 +511,7 @@ class GestionVente :
                 self.label.place(relx=0.02, rely=0, relwidth=1, relheight=0.1)
                 ligne = Frame(self.label, bg='#d6d4d4', height=-20).place(relx=0.0, rely=0.1, relwidth=1)
 
-                self.title1 = Label(self.label, text ="Fac", font = ('Segoe UI',10),fg='#adabab',bg='white')
+                self.title1 = Label(self.label, text =item[2], font = ('Segoe UI',10),fg='#adabab',bg='white')
                 self.title1.place(relx=0.00, rely=0.25,relwidth=0.2)
                 self.title2 = Label(self.label, text =item[0], font = ('Segoe UI ',10),fg='#adabab',bg='white')
                 self.title2.place(relx=0.21, rely=0.25,relwidth=0.2)
@@ -490,7 +526,7 @@ class GestionVente :
 
                 self.bouton_Detail= Button(self.label,bg='#ebf4f5',text='Details',relief='flat', font =('Segoe UI',9),fg='#adabab')
                 self.bouton_Detail.place(relx=0.73,rely=0.25,relwidth=0.1, height=26)
-                self.bouton_Detail.configure( command=lambda article=item[0]:HandleClickDetails(article))
+                self.bouton_Detail.configure( command=lambda article=item[2]:HandleClickDetails(article))
                 self.bouton_Sup= Button(self.label,bg='red',text='Sup',relief='flat', font =('Segoe UI',9),fg='white')
                 self.bouton_Sup.place(relx=0.85,rely=0.25,relwidth=0.1, height=26)
                 self.bouton_Sup.configure( command=lambda article=item[0]:HandleClickDelete(article))
@@ -505,7 +541,7 @@ class GestionVente :
                 ligne = Frame(self.label, bg='#d6d4d4', height=-20).place(relx=0.0, rely=0.1, relwidth=1)
 
 
-                self.title1 = Label(self.label, text ="Fac", font = ('Segoe UI',10),fg='#adabab',bg='white')
+                self.title1 = Label(self.label, text =item[2], font = ('Segoe UI',10),fg='#adabab',bg='white')
                 self.title1.place(relx=0.00, rely=0.25,relwidth=0.2)
                 self.title2 = Label(self.label, text =item[0], font = ('Segoe UI ',10),fg='#adabab',bg='white')
                 self.title2.place(relx=0.21, rely=0.25,relwidth=0.2)
@@ -520,11 +556,11 @@ class GestionVente :
 
                 self.bouton_Detail= Button(self.label,bg='#ebf4f5',text='Details',relief='flat', font =('Segoe UI',9),fg='#adabab')
                 self.bouton_Detail.place(relx=0.73,rely=0.25,relwidth=0.1, height=26)
-                self.bouton_Detail.configure( command=lambda article=item[0]:HandleClickDetails(article))
+                self.bouton_Detail.configure( command=lambda article=item[2]:HandleClickDetails(article))
 
                 self.bouton_Sup= Button(self.label,bg='red',text='Sup',relief='flat', font =('Segoe UI',9),fg='white')
                 self.bouton_Sup.place(relx=0.85,rely=0.25,relwidth=0.1, height=26)
-                self.bouton_Sup.configure( command=lambda article=item[0]:HandleClickDelete(article))
+                self.bouton_Sup.configure( command=lambda article=item[2]:HandleClickDelete(article))
 
                 window_id = self.canvas.create_window(20, y, anchor=W, window=self.label)  # Adjust x-position (20 here) as needed
                 y += self.label.winfo_reqheight() + 5
@@ -534,6 +570,7 @@ class GestionVente :
             self.canvas.config(scrollregion=(0, 0, self.canvas.winfo_width(), self.canvas.winfo_height() + y))
 
             def HandleClickDelete(nomArticle):
+                print(nomArticle)
             #-----------------Details stock-----------------------
                 if self.EtatFacture :
                     result=askyesno("Confirmation","Voulez-vous enregsitrer les modifications  ?")
@@ -553,7 +590,26 @@ class GestionVente :
         
 
             def HandleClickDetails(nomArticle):
+                print(nomArticle)
+                self.select_facture=nomArticle
             #-----------------Details stock-----------------------
+            
+                info_total=Facture_back('').get_total_fact(self.curseur,self.select_facture)
+                print(info_total)
+                if info_total[0] and len(info_total[1])!=0:
+                    total=info_total
+                else:
+                    total=(True, [('', 0.0)])
+                
+                
+                print(total)
+                inf=Facture_back('').get_client_by_id_fact(self.curseur,self.select_facture)[1][0]
+                print(inf)
+                self.infos_detail_facture['num_fac']=self.select_facture
+                self.infos_detail_facture['date_fac']=inf[1]
+                self.infos_detail_facture['nom_client']=inf[0]
+                self.infos_detail_facture['total']=total[1][0][1]
+                self.listeArticleFacture=Facture_back('').get_item_by_id_fact(self.curseur,self.select_facture)[1]
                 if self.EtatFacture :
                     result=askyesno("Confirmation","Voulez-vous enregsitrer les modifications  ?")
                     if result :

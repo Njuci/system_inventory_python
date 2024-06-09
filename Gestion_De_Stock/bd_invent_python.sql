@@ -246,3 +246,23 @@ END;
 //
 DELIMITER ;
 
+
+
+
+-- Pour la table tb_vente
+ALTER TABLE tb_vente
+DROP FOREIGN KEY pf_fac_vente; -- Supprimez la contrainte existante
+ALTER TABLE tb_vente
+ADD CONSTRAINT fk_vente_id_facture
+FOREIGN KEY (id_facture)
+REFERENCES tb_facture (id_facture)
+ON DELETE CASCADE;
+
+-- Pour la table tb_prix_vente
+ALTER TABLE tb_prix_vente
+DROP FOREIGN KEY pf_pv_produit; -- Supprimez la contrainte existante
+ALTER TABLE tb_prix_vente
+ADD CONSTRAINT fk_pv_produit
+FOREIGN KEY (id_produit)
+REFERENCES tb_produit (id_produit)
+ON DELETE CASCADE;
