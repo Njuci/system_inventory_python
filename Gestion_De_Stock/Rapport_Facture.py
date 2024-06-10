@@ -31,7 +31,7 @@ class FacturePDF :
     def genererFacture(self,data):
         # Initialisation des styles
         styles = getSampleStyleSheet()
-        custom_style = styles['Normal'].clone('custom_style', fontName='Agence FBI', fontSize=12)
+        custom_style = styles['Normal'].clone('custom_style', fontName='Agence FBI', fontSize=9)
         left=10
         right=10
         top=5
@@ -66,7 +66,9 @@ class FacturePDF :
         produits=data[1]
         ListeArticleFacture=[]
         custom_style_table = TableStyle([
-    ('FONTNAME', (0, 0), (-1, -1), 'AgencyFB-Bold'),  # Apply the font to all cells
+    ('FONTNAME', (0, 0), (-1, -1), 'AgencyFB-Bold'), 
+    ('FONTSIZE', (0, 0), (-1, -1), 9), 
+    # Apply the font to all cells
     # ... Other cell styles (borders, alignment, etc.) ...
 ])
         hauteurDynamique=80
