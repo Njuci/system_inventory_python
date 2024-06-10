@@ -193,15 +193,7 @@ class GestionVente :
 
         #--------------------Generation pdf ---------------------
 
-        def genererFacture():
-            if(self.numVente.get()!="" or self.NomClient.get()!="" or self.numFact.get()!=""):
-                if len(self.listeArtticle)!=0:
-                    showinfo(nom[0],'Succes')
-                    self.RapportPDF.genererFacture([])
-                else :
-                    showwarning(nom[0],'Veuillez ajouter les produits')
-            else :
-                showwarning(nom[0],'Veuillez remplir tout les champs')
+
 
 
 
@@ -212,7 +204,6 @@ class GestionVente :
     def SupprimerProduits(self,index):
             result=askyesno("Confirmation","Voulez-vous vraiment supprimer ce produit sur cette Facture ?")
             #initialisation de la liste des produits
-            
             
             info_total=Facture_back('').get_total_fact(self.curseur,self.select_facture)
             print(info_total)
@@ -250,14 +241,11 @@ class GestionVente :
                     for i in self.listeArticleSupprime:
                         if supr_vente.del_vente(self.curseur,i[0]):
                             f=True
-                showinfo('Confirmation','Modification enregistrée')          
-                
-                
-                
+                showinfo('Confirmation','Modification enregistrée')    
+                self.FormulaireVente()
+                self.EtatFacture=False      
+                   
             else :
-                
-                
-                
                 self.FormulaireVente()
                 self.EtatFacture=False
         else :
@@ -387,7 +375,7 @@ class GestionVente :
         self.SearchClient = Label(self.VenteForm, text='DETAILS VENTE ',bg='white',font = ('Segoe UI bold',12),fg='black')
         self.SearchClient.place(relx=0.02,rely=0.02,relwidth=1)
 
-        self.bouton_Imprimer= Button(self.VenteForm,bg='#416b70',text='Imprimer',relief='flat', font =('Segoe UI',9),fg='white',command=lambda:self.genererFacture())
+        self.bouton_Imprimer= Button(self.VenteForm,bg='#416b70',text='Imprimer',relief='flat', font =('Segoe UI',9),fg='white',command=lambda:genererFacture())
         self.bouton_Imprimer.place(relx=0.70,rely=0.02,relwidth=0.2, height=30)
 
 
@@ -445,6 +433,17 @@ class GestionVente :
  
         self.FrameFacture=self.VenteForm
         self.ActualiserDetails()
+
+        def genererFacture():
+            result=askyesno("Confirmation","Voulez-vous imprimer  ?")
+            if result :
+                if len(self.listeArticleFacture)!=0:
+                    self.RapportPDF.genererFacture([self.infos_detail_facture,self.listeArticleFacture])
+                    showinfo(nom[0],'Succes')
+                else :
+                    showwarning(nom[0],'Cette facture n\'a pas des produits')
+            else :
+                pass
 
        
 
