@@ -35,7 +35,7 @@ class Facture_back:
     #get_client
     def get_all_fact(self,curseur):
         try:
-            curseur.execute('select date_format(tb_facture.date_facturation,\'%d-%m-%Y\')as date_facturation,tb_client.nom_cli, tb_facture.id_facture from tb_client inner join tb_facture on tb_client.id_client=tb_facture.id_client order by date_facturation')
+            curseur.execute('select date_format(tb_facture.date_facturation,\'%d-%m-%Y\')as date_facturation,tb_client.nom_cli, tb_facture.id_facture from tb_client inner join tb_facture on tb_client.id_client=tb_facture.id_client order by tb_facture.id_facture desc')
             return True,curseur.fetchall()
         
         except Exception as e:
@@ -46,7 +46,7 @@ class Facture_back:
     
     def get_distinct_date(self,curseur):
         try:
-            curseur.execute('SELECT DISTINCT date_format(date_facturation,\'%d-%m-%Y\') as date_facturation FROM tb_facture order by date_facturation')
+            curseur.execute('SELECT DISTINCT date_format(date_facturation,\'%d-%m-%Y\') as date_facturation FROM tb_facture order by date_facturation desc')
             return True,curseur.fetchall()
         except Exception as e:
             messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
@@ -54,7 +54,7 @@ class Facture_back:
     #get facture by date
     def get_fact_by_date(self,curseur,date):
         try:
-            curseur.execute('SELECT date_format(tb_facture.date_facturation,\'%d-%m-%Y\')as date_facturation,tb_client.nom_cli,tb_facture.id_facture  FROM tb_facture INNER JOIN tb_client ON tb_facture.id_client=tb_client.id_client WHERE date_format(date_facturation,\'%d-%m-%Y\')=%s order by date_facturation',(date,))
+            curseur.execute('SELECT date_format(tb_facture.date_facturation,\'%d-%m-%Y\')as date_facturation,tb_client.nom_cli,tb_facture.id_facture  FROM tb_facture INNER JOIN tb_client ON tb_facture.id_client=tb_client.id_client WHERE date_format(date_facturation,\'%d-%m-%Y\')=%s order by tb_facture.id_facture desc',(date,))
             return True,curseur.fetchall()
         except Exception as e:
             messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')

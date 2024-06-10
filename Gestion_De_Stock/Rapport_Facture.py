@@ -1,20 +1,37 @@
 import reportlab
 from reportlab.lib import colors
-
+import os
+from PIL import Image
 from reportlab.platypus import *
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch, mm
 from reportlab.platypus.tables import Table, TableStyle
 import webbrowser
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+chemin_absolu = os.getcwd()
+d=chemin_absolu.split("\\")
+chemin_absolu=""
+for i in range(len(d)):
+    if i==0:
+        chemin_absolu=d[i]
+    else:
+        chemin_absolu=chemin_absolu+"/"+d[i]
+    
+
+pdfmetrics.registerFont(TTFont('AgencyFB-Bold',chemin_absolu+ '/AgencyFB-Bold 700.ttf'))
+# Register the font
+pdfmetrics.registerFont(TTFont('Agence FBI', chemin_absolu + '/AgencyFB-Bold 700.ttf'))
+
+# Use the font in your style
 class FacturePDF :
     def __init__(self):
         self.data=[]
     
     def genererFacture(self,data):
         # Initialisation des styles
-        stylesheet = getSampleStyleSheet()
-
-        # Informations de l'entreprise
+        styles = getSampleStyleSheet()
+        custom_style = styles['Normal'].clone('custom_style', fontName='Agence FBI', fontSize=12)
         left=10
         right=10
         top=5
@@ -48,7 +65,10 @@ class FacturePDF :
         ]
         produits=data[1]
         ListeArticleFacture=[]
-
+        custom_style_table = TableStyle([
+    ('FONTNAME', (0, 0), (-1, -1), 'AgencyFB-Bold'),  # Apply the font to all cells
+    # ... Other cell styles (borders, alignment, etc.) ...
+])
         hauteurDynamique=80
         a=0
         total_ht = 0
@@ -60,7 +80,7 @@ class FacturePDF :
                 total_ht+=item[4]
                 ListeArticleFacture.append((item[1],item[3],item[2],item[4]))
 
-        tva = total_ht * 0.16  # TVA à 18%
+        tva = total_ht * 0.16  # TVA à 16%
         total_ttc = total_ht + tva
 
         # Création d'un document PDF de format A6 (petit format)
@@ -72,9 +92,20 @@ class FacturePDF :
 
         # Éléments de la facture
         elements = []
-
+        
+        chemin_absolu = os.getcwd()
+        d=chemin_absolu.split("\\")
+        chemin_absolu=""
+        for i in range(len(d)):
+            if i==0:
+                chemin_absolu=d[i]
+            else:
+                chemin_absolu=chemin_absolu+"/"+d[i]
+        print(chemin_absolu)
         # En-tête de la facture
-        logo = Image("logo.png", 1 * inch, 0.2 * inch)  # Remplacer "logo.png" par votre logo
+        
+        logo_path = chemin_absolu+"/logo.png"
+        logo = Image(logo_path, 1 * inch, 0.2 * inch)
         elements.append(logo)
 
         elements.append(Paragraph(nom_entreprise))
@@ -84,13 +115,13 @@ class FacturePDF :
 
 
         # Informations du client
-        elements.append(Paragraph("Facture à:"))
-        elements.append(Paragraph(nom_client))
-        elements.append(Paragraph(adresse_client))
+        elements.append(Paragraph("Facture à:",custom_style))
+        elements.append(Paragraph(nom_client,custom_style))
+        elements.append(Paragraph(adresse_client,custom_style))
 
         # Informations de la facture
         elements.append(Table([["N° Facture:", numero_facture],
-                            ["Date Facture:", date_facture]]))
+                            ["Date Facture:", date_facture]]).setStyle(custom_style_table))
 
         # Liste des produits
         L=[90,40,40,40]
@@ -100,7 +131,7 @@ class FacturePDF :
 
         # Total HT, TVA, TTC
         elements.append(Table([["Total HT:",total_ht],
-                            ["TVA 18%:",tva],
+                            ["TVA 16%:",tva],
                                 ["Total TTC::",total_ttc]]))
 
         """
