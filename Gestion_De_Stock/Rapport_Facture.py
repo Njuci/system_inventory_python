@@ -110,10 +110,10 @@ class FacturePDF :
         logo = Image(logo_path, 1 * inch, 0.2 * inch)
         elements.append(logo)
 
-        elements.append(Paragraph(nom_entreprise))
-        elements.append(Paragraph(adresse_entreprise))
-        elements.append(Paragraph(f"Téléphone: {numero_telephone_entreprise}"))
-        elements.append(Paragraph(f"Email: {email_entreprise}"))
+        elements.append(Paragraph(nom_entreprise,custom_style))
+        elements.append(Paragraph(adresse_entreprise,custom_style))
+        elements.append(Paragraph(f"Téléphone: {numero_telephone_entreprise}",custom_style))
+        elements.append(Paragraph(f"Email: {email_entreprise}",custom_style))
 
 
         # Informations du client
@@ -128,13 +128,21 @@ class FacturePDF :
         # Liste des produits
         L=[90,40,40,40]
         table_produits = Table([
-            ["Désignation", "Qnt", "Prix U.", "Prix T."], *ListeArticleFacture],colWidths=L,style=[('GRID', (0, 0), (-1, -1), 1, colors.black)])
+            ["Désignation", "Qnt", "Prix U.", "Prix T."], 
+            *ListeArticleFacture],colWidths=L,style=[('GRID', (0, 0), (-1, -1), 1, colors.black) , 
+                                                     ('FONTNAME', (0, 0), (-1, -1), 'AgencyFB-Bold'), 
+    ('FONTSIZE', (0, 0), (-1, -1), 9) ])
         elements.append(table_produits)
+        elements.append(Spacer(1, 12))
 
         # Total HT, TVA, TTC
         elements.append(Table([["Total HT:",total_ht],
                             ["TVA 16%:",tva],
-                                ["Total TTC::",total_ttc]]))
+                                ["Total TTC::",total_ttc]],style=[#('GRID', (0, 0), (-1, -1), 1, colors.black) , 
+                                                     ('FONTNAME', (0, 0), (-1, -1), 'AgencyFB-Bold'), 
+                                                     #mettre le tableau à l'extrémité droite
+                                                        ('ALIGN', (0, 0), (-1, -1), 'RIGHT'),
+    ('FONTSIZE', (0, 0), (-1, -1), 9) ]))
 
         """
         elements.append(Paragraph("Total HT: "+f"{:.2f} €"))
