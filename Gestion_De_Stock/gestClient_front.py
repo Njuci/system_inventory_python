@@ -114,8 +114,8 @@ class GestionClient :
         # Configure the canvas to use the scrollbar
         self.canvas.configure(yscrollcommand=scrollbar.set)
 
-        self.title = Label(self.tabStockActuel, text="Noms", font=('Segoe UI ', 10), fg='#416b70', bg='white').place(relx=0.03, rely=0.02, relwidth=0.43)
-        self.title = Label(self.tabStockActuel, text="Numéro Télephone", font=('Segoe UI ', 10), fg='#416b70', bg='white').place(relx=0.47, rely=0.02, relwidth=0.4)
+        self.title = Label(self.tabStockActuel, text="Noms", font=('Segoe UI ', 10), fg='#416b70', bg='white').place(relx=0.06, rely=0.02, relwidth=0.37)
+        self.title = Label(self.tabStockActuel, text="Numéro Télephone", font=('Segoe UI ', 10), fg='#416b70', bg='white').place(relx=0.45, rely=0.02, relwidth=0.28)
 
 
         y=0
@@ -147,9 +147,9 @@ class GestionClient :
                 ligne = Frame(self.label, bg='#d6d4d4', height=-20).place(relx=0.0, rely=0.1, relwidth=1)
 
                 self.title1 = Label(self.label, text = item[2], font = ('Segoe UI',10),fg='#adabab',bg='white')
-                self.title1.place(relx=0.03, rely=0.25,relwidth=0.45)
+                self.title1.place(relx=0.03, rely=0.25,relwidth=0.44)
                 self.title2 = Label(self.label, text =item[3], font = ('Segoe UI ',10),fg='#adabab',bg='white')
-                self.title2.place(relx=0.45, rely=0.25,relwidth=0.4)
+                self.title2.place(relx=0.49, rely=0.25,relwidth=0.33)
 
 
 
@@ -165,8 +165,8 @@ class GestionClient :
                 self.label.place(relx=0.02, rely=0, relwidth=1, relheight=0.1)
                 ligne = Frame(self.label, bg='#d6d4d4', height=-20).place(relx=0.0, rely=0.1, relwidth=1)
 
-                self.title = Label(self.label, text = item[2], font = ('Segoe UI',10),fg='#adabab',bg='white').place(relx=0.03, rely=0.25,relwidth=0.45)
-                self.title = Label(self.label, text =item[3], font = ('Segoe UI ',10),fg='#adabab',bg='white').place(relx=0.45, rely=0.25,relwidth=0.4)
+                self.title = Label(self.label, text = item[2], font = ('Segoe UI',10),fg='#adabab',bg='white').place(relx=0.03, rely=0.25,relwidth=0.44)
+                self.title = Label(self.label, text =item[3], font = ('Segoe UI ',10),fg='#adabab',bg='white').place(relx=0.49, rely=0.25,relwidth=0.33)
                 self.bouton_Detail= Button(self.label,bg='#ebf4f5',text='Modifier',relief='flat', font =('Segoe UI',9),fg='#adabab')
                 self.bouton_Detail.place(relx=0.84,rely=0.25,relwidth=0.15, height=26)
                 self.bouton_Detail.configure( command=lambda article=item:HandleUpdateClient(article))

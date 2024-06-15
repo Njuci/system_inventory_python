@@ -128,8 +128,8 @@ class GestionStock :
         # Configure the canvas to use the scrollbar
         self.canvas.configure(yscrollcommand=scrollbar.set)
 
-        self.title = Label(self.tabStockActuel, text="Nom article", font=('Segoe UI ', 9), fg='#416b70', bg='white').place(relx=0.03, rely=0.02, relwidth=0.43)
-        self.title = Label(self.tabStockActuel, text="Quantité ", font=('Segoe UI ', 9), fg='#416b70', bg='white').place(relx=0.47, rely=0.02, relwidth=0.3)
+        self.title = Label(self.tabStockActuel, text="Nom article", font=('Segoe UI ', 9), fg='#416b70', bg='white').place(relx=0.03, rely=0.02, relwidth=0.5)
+        self.title = Label(self.tabStockActuel, text="Qnt", font=('Segoe UI ', 9), fg='#416b70', bg='white').place(relx=0.55, rely=0.02, relwidth=0.1)
 
 
         y=0
@@ -159,8 +159,8 @@ class GestionStock :
                 self.label.place(relx=0.02, rely=0, relwidth=1, relheight=0.1)
                 ligne = Frame(self.label, bg='#d6d4d4', height=-20).place(relx=0.0, rely=0.1, relwidth=1)
 
-                self.title = Label(self.label, text = item[0], font = ('Segoe UI',8),fg='#adabab',bg='white').place(relx=0.03, rely=0.25,relwidth=0.3)
-                self.title = Label(self.label, text =item[1], font = ('Segoe UI ',8),fg='#adabab',bg='white').place(relx=0.4, rely=0.25,relwidth=0.3)
+                self.title = Label(self.label, text = item[0], font = ('Segoe UI',8),fg='#adabab',bg='white').place(relx=0.03, rely=0.25,relwidth=0.54)
+                self.title = Label(self.label, text =item[1], font = ('Segoe UI ',8),fg='#adabab',bg='white').place(relx=0.6, rely=0.25,relwidth=0.1)
                 self.bouton_Detail= Button(self.label,bg='#ebf4f5',text='Détails',relief='flat', font =('Segoe UI',9),fg='#adabab')
                 self.bouton_Detail.place(relx=0.72,rely=0.25,relwidth=0.25, height=26)
                 self.bouton_Detail.configure( command=lambda article=item[0]:HandleClickDetails(article))
@@ -173,8 +173,8 @@ class GestionStock :
                 self.label.place(relx=0.02, rely=0, relwidth=1, relheight=0.1)
                 ligne = Frame(self.label, bg='#d6d4d4', height=-20).place(relx=0.0, rely=0.1, relwidth=1)
 
-                self.title = Label(self.label, text = item[0], font = ('Segoe UI',8),fg='#adabab',bg='white').place(relx=0.03, rely=0.25,relwidth=0.3)
-                self.title = Label(self.label, text =item[1], font = ('Segoe UI ',8),fg='#adabab',bg='white').place(relx=0.4, rely=0.25,relwidth=0.3)
+                self.title = Label(self.label, text = item[0], font = ('Segoe UI',8),fg='#adabab',bg='white').place(relx=0.03, rely=0.25,relwidth=0.54)
+                self.title = Label(self.label, text =item[1], font = ('Segoe UI ',8),fg='#adabab',bg='white').place(relx=0.6, rely=0.25,relwidth=0.1)
                 self.bouton_Detail= Button(self.label,bg='#ebf4f5',text='Détails',relief='flat', font =('Segoe UI',9),fg='#adabab')
                 self.bouton_Detail.place(relx=0.72,rely=0.25,relwidth=0.25, height=26)
                 self.bouton_Detail.configure( command=lambda article=item[0]:HandleClickDetails(article))
@@ -232,8 +232,8 @@ class GestionStock :
         self.title = Label(self.tabStockActuel, text="Date entrée", font=('Segoe UI ', 9), fg='#416b70', bg='white').place(relx=0.03, rely=0.02, relwidth=0.2)
         self.title = Label(self.tabStockActuel, text="Quantité ", font=('Segoe UI ', 9), fg='#416b70', bg='white').place(relx=0.24, rely=0.02, relwidth=0.2)
 
-        self.title = Label(self.tabStockActuel, text="Date de sortie", font=('Segoe UI ', 7), fg='#416b70', bg='white').place(relx=0.45, rely=0.02, relwidth=0.2)
-        self.title = Label(self.tabStockActuel, text="Stock Sortie", font=('Segoe UI ', 7), fg='#416b70', bg='white').place(relx=0.66, rely=0.02, relwidth=0.2)
+        self.title = Label(self.tabStockActuel, text="Date de sortie", font=('Segoe UI ', 9), fg='#416b70', bg='white').place(relx=0.45, rely=0.02, relwidth=0.2)
+        self.title = Label(self.tabStockActuel, text="Stock Sortie", font=('Segoe UI ', 9), fg='#416b70', bg='white').place(relx=0.66, rely=0.02, relwidth=0.2)
 
         # Loop to generate stock list items dynamically
         t = 0.1  # Initial vertical position for the first item
@@ -261,10 +261,10 @@ class GestionStock :
 
                 # Labels for article name and quantity
                 print(item)
-                self.title = Label(self.label, text=item[1], font=('Segoe UI', 8), fg='#adabab', bg='white').place(relx=0.00, rely=0.25, relwidth=0.25)
-                self.title = Label(self.label, text=item[2], font=('Segoe UI ', 8), fg='#adabab', bg='white').place(relx=0.26, rely=0.25, relwidth=0.25)
-                self.title = Label(self.label, text=item[3], font=('Segoe UI', 8), fg='#adabab', bg='white').place(relx=0.52, rely=0.25, relwidth=0.25)
-                self.title = Label(self.label, text=item[4], font=('Segoe UI ', 8), fg='#adabab', bg='white').place(relx=0.79, rely=0.25, relwidth=0.25)
+                self.title = Label(self.label, text=item[1], font=('Segoe UI', 9), fg='#adabab', bg='white').place(relx=0.00, rely=0.25, relwidth=0.25)
+                self.title = Label(self.label, text=item[2], font=('Segoe UI ', 9), fg='#adabab', bg='white').place(relx=0.26, rely=0.25, relwidth=0.25)
+                self.title = Label(self.label, text=item[3], font=('Segoe UI', 9), fg='#adabab', bg='white').place(relx=0.52, rely=0.25, relwidth=0.25)
+                self.title = Label(self.label, text=item[4], font=('Segoe UI ', 9), fg='#adabab', bg='white').place(relx=0.79, rely=0.25, relwidth=0.25)
                 window_id = self.canvas.create_window(20, y, anchor=W, window=self.label)  # Adjust x-position (20 here) as needed
                 y += self.label.winfo_reqheight() + 5
 

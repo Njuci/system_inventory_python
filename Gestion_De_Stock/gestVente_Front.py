@@ -57,15 +57,11 @@ class GestionVente :
         self.RightContener.place(relx=0.45, rely=0.1,relwidth=0.5,relheight=0.8)
 
         #Search vente
-        self.SearchClient = Label(self.RightContener, text='Recherche',font =('Segoe UI',10),fg='#adabab',bg='#ebf4f5')
+        self.SearchClient = Label(self.RightContener, text='TOTAL VENTE :',font =('Segoe UI bold',12),fg='#adabab',bg='#ebf4f5')
         self.SearchClient.place(relx=0.02,rely=0.02)
 
-        self.paddingEntry=Frame(self.RightContener,bg='#ebf4f5')
-        self.paddingEntry.place(relx=0.2,rely=0.02,relwidth=0.5, height=28)
-        self.SearchEntry=Entry(self.paddingEntry,relief='flat', font =('Segoe UI',10),bg='white')
-        self.SearchEntry.place(relx=0.02,rely=0.02,relwidth=0.96, height=26)
-
- 
+        self.LabelTotal=Label(self.RightContener,text='10 000Fc',font =('Segoe UI bold',12),bg='#ebf4f5')
+        self.LabelTotal.place(relx=0.2,rely=0.02)
 
         self.title_listeVente = Label(self.RightContener, text = "Liste de vente", font = ('Segoe UI bold',12),fg='black',bg='#ebf4f5')
         self.title_listeVente.place(relx=0.02, rely=0.12)
@@ -318,7 +314,7 @@ class GestionVente :
                     self.Prix=Label(self.label,font =('Segoe UI',10),bg='white',text=item[4])
                     self.Prix.place(relx=0.71,rely=0.0,relwidth=0.16, relheight=0.7)
 
-                    self.Sup=Label(self.label,font =('Segoe UI',10),text="SUP",bg='red',fg="white")
+                    self.Sup=Label(self.label,font =('Segoe UI',10),text="Sup",bg='#961919',fg="white")
                     self.Sup.place(relx=0.89,rely=0.0,relwidth=0.1, relheight=0.7)
                     self.Sup.bind('<Double-Button-1>', lambda event,ide=index: self.SupprimerProduits(ide))
 
@@ -344,7 +340,7 @@ class GestionVente :
                     self.Prix=Label(self.label,font =('Segoe UI',10),bg='white',text=item[4])
                     self.Prix.place(relx=0.71,rely=0.0,relwidth=0.16, relheight=0.7)
 
-                    self.Sup=Label(self.label,font =('Segoe UI',10),text="SUP",bg='red',fg="white")
+                    self.Sup=Label(self.label,font =('Segoe UI',10),text="Sup",bg='#961919',fg="white")
                     self.Sup.place(relx=0.89,rely=0.0,relwidth=0.1, relheight=0.7)
                     self.Sup.bind('<Double-Button-1>', lambda event,ide=index: self.SupprimerProduits(ide))
 
@@ -523,10 +519,10 @@ class GestionVente :
                 self.title1.bind('<Double-Button-1>', lambda article=item[0]: HandleUpdateArticle(article))
 
 
-                self.bouton_Detail= Button(self.label,bg='#ebf4f5',text='Details',relief='flat', font =('Segoe UI',9),fg='#adabab')
+                self.bouton_Detail= Button(self.label,bg='#ebf4f5',text='Détails',relief='flat', font =('Segoe UI',9),fg='#adabab')
                 self.bouton_Detail.place(relx=0.73,rely=0.25,relwidth=0.1, height=26)
                 self.bouton_Detail.configure( command=lambda article=item[2]:HandleClickDetails(article))
-                self.bouton_Sup= Button(self.label,bg='red',text='Sup',relief='flat', font =('Segoe UI',9),fg='white')
+                self.bouton_Sup= Button(self.label,bg='#961919',text='Sup',relief='flat', font =('Segoe UI',9),fg='white')
                 self.bouton_Sup.place(relx=0.85,rely=0.25,relwidth=0.1, height=26)
                 self.bouton_Sup.configure( command=lambda article=item[0]:HandleClickDelete(article))
 
@@ -553,11 +549,11 @@ class GestionVente :
                 self.title1.bind('<Double-Button-1>', lambda article=item[0]: HandleUpdateArticle(article))
 
 
-                self.bouton_Detail= Button(self.label,bg='#ebf4f5',text='Details',relief='flat', font =('Segoe UI',9),fg='#adabab')
+                self.bouton_Detail= Button(self.label,bg='#ebf4f5',text='Détails',relief='flat', font =('Segoe UI',9),fg='#adabab')
                 self.bouton_Detail.place(relx=0.73,rely=0.25,relwidth=0.1, height=26)
                 self.bouton_Detail.configure( command=lambda article=item[2]:HandleClickDetails(article))
 
-                self.bouton_Sup= Button(self.label,bg='red',text='Sup',relief='flat', font =('Segoe UI',9),fg='white')
+                self.bouton_Sup= Button(self.label,bg='#961919',text='Sup',relief='flat', font =('Segoe UI',9),fg='white')
                 self.bouton_Sup.place(relx=0.85,rely=0.25,relwidth=0.1, height=26)
                 self.bouton_Sup.configure( command=lambda article=item[2]:HandleClickDelete(article))
 
