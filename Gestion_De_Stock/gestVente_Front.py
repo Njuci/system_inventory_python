@@ -157,6 +157,7 @@ class GestionVente :
 
         self.bouton_Plus= Button(self.VenteForm,bg='#416b70',text='PRODUIT',relief='flat', font =('Segoe UI',9),fg='white',command=self.ShowForm)
         self.bouton_Plus.place(relx=0.81,rely=0.2,relwidth=0.11, height=26)
+        
 
         if len(self.listeArtticle)!=0:
             self.articleContent=Frame(self.VenteForm,bg='white')
@@ -687,9 +688,9 @@ class GestionVente :
                 self.nomArt=Label(self.label,font =('Segoe UI',10),bg='white',text=item[2])
                 self.nomArt.place(relx=0.37,rely=0.0,relwidth=0.16, relheight=0.7)
 
-                self.Qnt=Label(self.label,font =('Segoe UI',10),bg='white',text='200')
+                self.Qnt=Label(self.label,font =('Segoe UI',10),bg='white',text=item[3])
                 self.Qnt.place(relx=0.54,rely=0.0,relwidth=0.16, relheight=0.7)
-                self.Prix=Label(self.label,font =('Segoe UI',10),bg='white',text='200000')
+                self.Prix=Label(self.label,font =('Segoe UI',10),bg='white',text=item[4])
                 self.Prix.place(relx=0.71,rely=0.0,relwidth=0.16, relheight=0.7)
 
                 self.Sup=Label(self.label,font =('Segoe UI',10),text="SUP",bg='red',fg="white")
@@ -713,9 +714,9 @@ class GestionVente :
                 self.nomArt=Label(self.label,font =('Segoe UI',10),bg='white',text=item[2])
                 self.nomArt.place(relx=0.37,rely=0.0,relwidth=0.16, relheight=0.7)
 
-                self.Qnt=Label(self.label,font =('Segoe UI',10),bg='white',text='200')
+                self.Qnt=Label(self.label,font =('Segoe UI',10),bg='white',text=item[3])
                 self.Qnt.place(relx=0.54,rely=0.0,relwidth=0.16, relheight=0.7)
-                self.Prix=Label(self.label,font =('Segoe UI',10),bg='white',text='200000')
+                self.Prix=Label(self.label,font =('Segoe UI',10),bg='white',text=item[4])
                 self.Prix.place(relx=0.71,rely=0.0,relwidth=0.16, relheight=0.7)
 
                 self.Sup=Label(self.label,font =('Segoe UI',10),text="SUP",bg='red',fg="white")
@@ -748,11 +749,15 @@ class GestionVente :
         n=self.infosApp.Configuration(self)
         if(self.inputID.get()!=""  or self.inputQnt.get()!="" ):
             if self.verification.Verification(self.inputQnt.get()):
-                h=[self.AllClients[self.inputID.get()],self.inputID.get(),self.inputQnt.get()]
-                if any(h == el for el in self.listeArtticle ):
+                #voir leprix 
+                price=Prix_vente_back("",0).get_prix_vente(self.curseur,self.AllClients[self.inputID.get()])
+                print()
+                h=[self.AllClients[self.inputID.get()],self.inputID.get(),self.inputQnt.get(),price[1][0][1],int(self.inputQnt.get())*price[1][0][1]]
+                if any(h[0] == el[0] for el in self.listeArtticle ):
                     showwarning(n[0],'Vous avez déjà ajouter cet article !!')
                 else :
                     self.listeArtticle.append(h)
+                    self.Total_fac()
                     #effqcer l'article de la liste2
                     self.actualiser()
                     self.ViderChamps()
@@ -761,108 +766,7 @@ class GestionVente :
 
         else :
             showwarning(n[0],'Veuillez remplir tout les champs')
-    def transaction_ajout_facture(self,client_id):
-        print('client',client_id)
-        fact=Facture_back(client_id)
-        # start transactiom 
-        self.db.db.autocommit=False
-        self.db.db.start_transaction()
-        if fact.add_fact(self.curseur):
-            self.curseur.execute('select max(id_facture) from tb_facture')
-            fact_id = self.curseur.fetchone()[0]
-            print('facture',fact_id)
 
-            #enregistrer chaque vente en regardant le PV et en implementant la logique Lifo aux stocks
-            for item in self.listeArtticle:
-                if self.db.db.autocommit==False:
-                                       #recuperer le prix de vente
-                                       
-                    try:
-                        prix=Prix_vente_back("",0).get_last_pv(self.curseur,item[0])[1][0][0]
-                        prix_test=True
-                    except Exception as e:
-                        showwarning("Erreur","pas de prix fixé "+str(e))
-                        prix_test=False
-                       
-                    #voir le stiock à utilisé
-                    print("le prix est",prix)
-                    #verifier si la quantite dispo est suffisante pour la vente si elle est petite on va chercher dans les autres stock
-                    def chercher_stock(id_produit):
-                        #print(id_produit)
-
-                    
-                        stock=Stock_back("",0,0).get_stock_dispo_id(self.curseur,id_produit)[1][0]
-                        #verifier si le stock est suffisant
-                        #print("le stock est",stock[1])
-                        
-                        
-                        quantite_info=Stock_back("",0,0).get_stock_ecoule(self.curseur,stock[1])[1][0]
-                        print("la quantite info est",quantite_info)
-
-                        quantite_dispo=quantite_info[2]-quantite_info[3]
-                        #print("la quantite est",quantite_dispo)
-                        return quantite_dispo,stock[1]
-                        #verifier si la quantite dispo est suffisante pour la vente si elle est petite on va chercher dans les autres stock
-                    #verifier si le stock est suffisant dans une bouble jusqu'a ce que la quantite des produits demandé soit atteinte
-                    if prix_test:
-                        self.db.db.autocommit=True
-                        quantite_demande=int(item[2])
-                        quantite_dispo=chercher_stock(item[0])[0]
-                        stock=chercher_stock(item[0])[1]
-                        print("la quantite dispo est",quantite_dispo)
-                        #verifier si le stock est 
-                        if quantite_dispo>=quantite_demande:
-                            vente=Vente_back(item[0],stock,fact_id,prix,quantite_demande)
-                            
-                            self.db.db.commit()
-                            print(item[0],stock,fact_id,prix,quantite_demande)
-                            vente.add_vente(self.curseur)
-                            print("la quantite dispo est",quantite_dispo)
-                            print("la quantite demandée est",quantite_demande)
-                            print("le stock est",stock)
-                            
-                        else:
-                        
-                            # If the available quantity is not enough, search in other stocks
-                            while quantite_dispo < quantite_demande:
-                                    # Search for stock with enough quantity
-                                quantite_dispo, stock = chercher_stock(item[0])
-                                print("la quantite dispo est",quantite_dispo)
-                                print("la quantite dispo est",quantite_dispo)
-                                print("la quantite demandée est",quantite_demande)
-                                print("le stock est",stock)
-                                    # Check if there is enough quantity in the stock
-                                if quantite_dispo >= quantite_demande:
-                                    vente = Vente_back(item[0], stock, fact_id, prix, quantite_demande)
-                                    vente.add_vente(self.curseur)
-                                    
-                                    self.db.db.commit()
-                                else:
-                                    # Reduce the quantity demanded by the quantity available in the stock
-                                    quantite_demande -= quantite_dispo
-                                # Continue searching in other stocks
-                            else:
-                                # If there are still unsatisfied items, stop recording for this sale and continue with the remaining items in self.listeArtticle
-                                break
-                    else:   
-                        break
-                   
-                else:
-                    
-                    self.db.db.rollback()
-                    self.db.db.autocommit = True
-                    showwarning("Erreur", "Erreur lors de l'enregistrement de la facture")
-                    break
-                self.db.db.autocommite=False
-            self.db.db.commit()
-            self.db.db.autocommit = True
-            self.listeArtticle = []
-            
-                 
-            return True
-        else:
-            
-            return False
     def ShowForm(self):
         if len(self.listeArtticle)==0:
             self.bouton_Plus= Button(self.VenteForm,bg='#ebf4f5',text='Ajouter',relief='flat', font =('Segoe UI',9),fg='#adabab',command=self.AddArticle)
@@ -901,18 +805,29 @@ class GestionVente :
 
             self.inputQnt=Entry(self.ContLigne,font =('Segoe UI',10),bg='white')
             self.inputQnt.place(relx=0.38,rely=0.0,relwidth=0.16, height=26)
-            self.Prix=Label(self.ContLigne,font =('Segoe UI',10),bg='white',text='200')
+            self.Prix=Label(self.ContLigne,font =('Segoe UI',10),bg='white',text='')
             self.Prix.place(relx=0.55,rely=0.0,relwidth=0.16, height=26)
-            self.PrixT=Label(self.ContLigne,font =('Segoe UI',10),bg='white',text='100000')
+            self.PrixT=Label(self.ContLigne,font =('Segoe UI',10),bg='white',text='')
             self.PrixT.place(relx=0.72,rely=0.0,relwidth=0.16, height=26)
             self.ligne=Frame(self.ContLigne,bg='#d6d4d4',height=-20).place(x=0, rely=0.9,relwidth=1)
 
             #Ligne de total
             self.TitreTotal=Label(self.VenteForm,font =('Segoe UI bold',12),bg='white',text='Total')
             self.TitreTotal.place(relx=0.00,rely=0.8,relwidth=0.15, height=26)
-            self.TitreTotal=Label(self.VenteForm,font =('Segoe UI bold',12),bg='white',text='200000 CDF')
+            self.Total_fac()
+    def Total_fac(self):
+        if len(self.listeArtticle)==0:
+            self.TitreTotal=Label(self.VenteForm,font =('Segoe UI bold',12),bg='white',text='00 CDF')
             self.TitreTotal.place(relx=0.5,rely=0.8,relwidth=0.6, height=26)
-    
+        else:
+            total=0
+            for i in self.listeArtticle:
+                total+=i[4]
+            
+            self.TitreTotal=Label(self.VenteForm,font =('Segoe UI bold',12),bg='white',text= str(total)+' CDF')
+            self.TitreTotal.place(relx=0.5,rely=0.8,relwidth=0.6, height=26)
+
+        
     
 
 
