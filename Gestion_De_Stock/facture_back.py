@@ -108,4 +108,37 @@ class Facture_back:
         except Exception as e:
             messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
             return False,[]
-
+    #get total for all facture
+    def get_total_all_fact(self,curseur):
+        string_query=""" SELECT SUM(quantite * montant) AS somme_ventes
+                            FROM tb_vente
+                            JOIN tb_prix_vente ON tb_vente.id_pv = tb_prix_vente.id_pv
+                            JOIN tb_facture ON tb_facture.id_facture = tb_vente.id_facture"""
+        try:
+            curseur.execute(string_query)
+            return True,curseur.fetchall()
+        except Exception as e:
+            messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
+            return False,[]
+        
+        
+    #get total for all facture FOR date
+    
+    def get_total_all_fact_for_date(self,curseur,date):
+        string_query=""" SELECT SUM(quantite * montant) AS somme_ventes
+                            FROM tb_vente
+                            JOIN tb_prix_vente ON tb_vente.id_pv = tb_prix_vente.id_pv
+                            JOIN tb_facture ON tb_facture.id_facture = tb_vente.id_facture
+                            WHERE date_format(date_facturation,\'%d-%m-%Y\')=%s"""
+        try:
+            curseur.execute(string_query,(date,))
+            return True,curseur.fetchall()
+        except Exception as e:
+            messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
+            return False,[]
+    
+    
+    
+    
+    
+    

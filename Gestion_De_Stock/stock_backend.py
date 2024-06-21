@@ -113,7 +113,7 @@ LEFT JOIN (
                             LEFT JOIN tb_facture ON tb_vente.id_facture = tb_facture.id_facture
                             WHERE tb_produit.designation_produit =%s
                             GROUP BY tb_stock.id_stock
-                            ORDER BY COALESCE(MAX(tb_facture.date_facturation), '0000-00-00 00:00:00') DESC;
+                            ORDER BY COALESCE(MAX(tb_stock.date_entree), '0000-00-00 00:00:00') DESC;
 
                                                     """
             curseur.execute(string_query,(designation_produit,))

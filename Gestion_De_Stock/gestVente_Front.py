@@ -3,7 +3,6 @@ from tkinter import ttk
 from tkinter.messagebox import askyesno,showinfo,showwarning
 from configuration import InfosApp
 from fakeData import FakeData
-from tkinter.messagebox import askyesno,showinfo,showwarning
 from verificationEntry import EntryVerification
 from Rapport_Facture import FacturePDF
 #from tkcalendar import DateEntry
@@ -60,8 +59,6 @@ class GestionVente :
         self.SearchClient = Label(self.RightContener, text='TOTAL VENTE :',font =('Segoe UI bold',12),fg='#adabab',bg='#ebf4f5')
         self.SearchClient.place(relx=0.02,rely=0.02)
 
-        self.LabelTotal=Label(self.RightContener,text='10 000Fc',font =('Segoe UI bold',12),bg='#ebf4f5')
-        self.LabelTotal.place(relx=0.2,rely=0.02)
 
         self.title_listeVente = Label(self.RightContener, text = "Liste de vente", font = ('Segoe UI bold',12),fg='black',bg='#ebf4f5')
         self.title_listeVente.place(relx=0.02, rely=0.12)
@@ -479,11 +476,21 @@ class GestionVente :
         if self.filtre_date:
             fact=Facture_back('')
             data=fact.get_fact_by_date(self.curseur,self.ListeDateVente.get())[1]
+            total=fact.get_total_all_fact_for_date(self.curseur,self.ListeDateVente.get())[1][0][0]
+            if total==None:
+                total=0.0
+            self.LabelTotal=Label(self.RightContener,text=str(total),font =('Segoe UI bold',12),bg='#ebf4f5')
+            self.LabelTotal.place(relx=0.2,rely=0.02,relwidth=0.2)
         else:
                 
             fact=Facture_back('')
             
             data=fact.get_all_fact(self.curseur)[1]
+            total=fact.get_total_all_fact(self.curseur)[1][0][0]
+            if total==None:
+                total=0.0
+            self.LabelTotal=Label(self.RightContener,text=str(total),font =('Segoe UI bold',12),bg='#ebf4f5')
+            self.LabelTotal.place(relx=0.2,rely=0.02,relwidth=0.2)
         t=0.1
         a=1
         for item in data:
