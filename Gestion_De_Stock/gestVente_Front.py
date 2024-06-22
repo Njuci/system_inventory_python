@@ -47,7 +47,7 @@ class GestionVente :
         self.listeArtticle2=[]
         if len(data)!=0:
                 for i in (data):
-                    self.AllClients[''+i[1]]=i[0]
+                    self.AllArticle[''+i[1]]=i[0]
                     self.listeArtticle2.append(i[1])
 
 
@@ -743,18 +743,18 @@ class GestionVente :
 
     #Fonction pour le vider les champs 
     def ViderChamps(self):
-        self.inputID.delete(0,END)
+        self.inputIDPro.delete(0,END)
         self.inputQnt.delete(0,END) 
 
     #Fonction d'ajout d'articles
     def AddArticle(self):
         n=self.infosApp.Configuration(self)
-        if(self.inputID.get()!=""  or self.inputQnt.get()!="" ):
+        if(self.inputIDPro.get()!=""  or self.inputQnt.get()!="" ):
             if self.verification.Verification(self.inputQnt.get()):
                 #voir leprix 
-                price=Prix_vente_back("",0).get_prix_vente(self.curseur,self.AllClients[self.inputID.get()])
-                print()
-                h=[self.AllClients[self.inputID.get()],self.inputID.get(),self.inputQnt.get(),price[1][0][1],int(self.inputQnt.get())*price[1][0][1]]
+                price=Prix_vente_back("",0).get_prix_vente(self.curseur,self.AllArticle[self.inputIDPro.get()])
+                
+                h=[self.AllArticle[self.inputIDPro.get()],self.inputIDPro.get(),self.inputQnt.get(),price[1][0][1],int(self.inputQnt.get())*price[1][0][1]]
                 if self.PanierArticle<10:
                     if any(h[0] == el[0] for el in self.listeArtticle ):
                         showwarning(n[0],'Vous avez déjà ajouter cet article !!')
@@ -805,9 +805,9 @@ class GestionVente :
             self.ContLigne.place(x=0, rely=0.00,relwidth=1,height=33)
             #####
 
-            self.inputID=ttk.Combobox(self.ContLigne,font =('Segoe UI',10))
-            self.inputID.place(relx=0.0,rely=0.0,relwidth=0.35, height=26)
-            self.inputID['values']=self.listeArtticle2
+            self.inputIDPro=ttk.Combobox(self.ContLigne,font =('Segoe UI',10))
+            self.inputIDPro.place(relx=0.0,rely=0.0,relwidth=0.35, height=26)
+            self.inputIDPro['values']=self.listeArtticle2
             
 
             self.inputQnt=Entry(self.ContLigne,font =('Segoe UI',10),bg='white')
