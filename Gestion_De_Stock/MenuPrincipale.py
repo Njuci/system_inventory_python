@@ -76,6 +76,7 @@ class MenuPrincipaleFrontend:
         self.ClientContent.place_forget()
         self.ArticleContent.place_forget()
         self.GestionStock.place_forget()
+        self.CreationMenu()
 
     def AfficherSlide1(self):
         self.etatInitialBtn()

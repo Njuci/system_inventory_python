@@ -35,6 +35,7 @@ class GestionVente :
         self.listeArtticle2=[]
         self.listeChoix=[] 
         self.infos_detail_facture={}
+        self.PanierArticle=0
         prod=Product_back('')
         data=prod.get_all_produit(self.curseur)[1]
         product_list=[]
@@ -179,6 +180,7 @@ class GestionVente :
                     self.transaction_ajout_facture2(self.AllClients[self.NomClient.get()])
                     self.FormulaireVente()
                     self.TableauArticles(530)
+                    self.PanierArticle=0
                     showinfo(nom[0],'Succes')
                 else :
                     showwarning(nom[0],'Veuillez ajouter les produits')
@@ -186,12 +188,6 @@ class GestionVente :
                 showwarning(nom[0],'Veuillez remplir tout les champs')
 
         #--------------------Generation pdf ---------------------
-
-
-
-
-
-
 #-----------------------------------Fin formulaire de vente-----------------------------------
 
 #-------------------------------------------Visualisation de vente ------------------------------
@@ -477,6 +473,8 @@ class GestionVente :
             fact=Facture_back('')
             data=fact.get_fact_by_date(self.curseur,self.ListeDateVente.get())[1]
             total=fact.get_total_all_fact_for_date(self.curseur,self.ListeDateVente.get())[1][0][0]
+            dataa=fact.get_fact_by_date(self.curseur,self.ListeDateVente.get())
+            print(dataa,"Total",total)
             if total==None:
                 total=0.0
             self.LabelTotal=Label(self.RightContener,text=str(total),font =('Segoe UI bold',12),bg='#ebf4f5')
@@ -598,16 +596,13 @@ class GestionVente :
             #-----------------Details stock-----------------------
             
                 info_total=Facture_back('').get_total_fact(self.curseur,self.select_facture)
-                print(info_total)
                 if info_total[0] and len(info_total[1])!=0:
                     total=info_total
                 else:
                     total=(True, [('', 0.0)])
-                
-                
-                print(total)
+
                 inf=Facture_back('').get_client_by_id_fact(self.curseur,self.select_facture)[1][0]
-                print(inf)
+            
                 self.infos_detail_facture['num_fac']=self.select_facture
                 self.infos_detail_facture['date_fac']=inf[1]
                 self.infos_detail_facture['nom_client']=inf[0]
@@ -760,14 +755,19 @@ class GestionVente :
                 price=Prix_vente_back("",0).get_prix_vente(self.curseur,self.AllClients[self.inputID.get()])
                 print()
                 h=[self.AllClients[self.inputID.get()],self.inputID.get(),self.inputQnt.get(),price[1][0][1],int(self.inputQnt.get())*price[1][0][1]]
-                if any(h[0] == el[0] for el in self.listeArtticle ):
-                    showwarning(n[0],'Vous avez déjà ajouter cet article !!')
-                else :
-                    self.listeArtticle.append(h)
-                    self.Total_fac()
-                    #effqcer l'article de la liste2
-                    self.actualiser()
-                    self.ViderChamps()
+                if self.PanierArticle<10:
+                    if any(h[0] == el[0] for el in self.listeArtticle ):
+                        showwarning(n[0],'Vous avez déjà ajouter cet article !!')
+                    else :
+                        self.PanierArticle+=1
+                        self.listeArtticle.append(h)
+                        self.Total_fac()
+                        #effqcer l'article de la liste2
+                        self.actualiser()
+                        self.ViderChamps()
+                else:
+                    showwarning(n[0],'Vous avez déjà atteint 10 articles !!')
+
             else :
                 showwarning(n[0],'La quantité doit être un entier')
 
