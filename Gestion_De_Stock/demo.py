@@ -1,18 +1,13 @@
 from login_back import Connexion
-from Gestion_De_Stock.pv_back import Prix_vente_back
+from pv_back import Prix_vente_back
 from client_backend import Client_back
 connex=Connexion("root","3670njci")
 curseur=connex.get_curseur()
 from stock_backend import Stock_back
-stock=Stock_back('PRO0000002',100,100)
+ag="07-09-2024"
+bg=ag.split('-')
 
-print(stock.get_detail_stock_produit(curseur,'banane')[1])
-
-
-
-
-
-
+print(bg.reverse())
 
 
 """

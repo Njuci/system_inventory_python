@@ -572,21 +572,46 @@ class GestionVente :
 
             def HandleClickDelete(nomArticle):
                 print(nomArticle)
+                
             #-----------------Details stock-----------------------
                 if self.EtatFacture :
                     result=askyesno("Confirmation","Voulez-vous enregsitrer les modifications  ?")
                     if result :
                         # veuillez supprimer tous les produits sur la facture et ajouter de nouveau les produits qui se 
+                        
+                        fact=Facture_back("")
+                        total=fact.get_total_fact(self.curseur,nomArticle)[1][0][1]
+                        if total==0 or total==None:
+                            fact.del_fact(self.curseur,nomArticle)
+                            #affi
+                            showinfo("Suppression Réussi",f"Vous avez supprimé la facture {nomArticle}")
+                        else:
+                            showwarning("Echec de suppression","Veuillez vous assurer que la facture a un solde de 0.0")
+                            
                         # trouvent dans la liste apres modification  voici la liste self.listeArticleFacture
                         pass
                     else :
                         self.FormulaireModificationVente()
                         self.EtatFacture=False
                 else :
-                    result=askyesno("Confirmation","Voulez-vous supprimer cette vente  ?")
+                    result=askyesno("Confirmation","Voulez-vous supprimer cette facture  ?")
                     if result :
+                        
+                        
+                        fact=Facture_back("")
+                        if len(fact.get_total_fact(self.curseur,nomArticle)[1])!=0:
+                            total=fact.get_total_fact(self.curseur,nomArticle)[1][0][1]
+                        else:
+                            total=0
+                        if total==0 or total==None:
+                            fact.del_fact(self.curseur,nomArticle)
+                            #affi
+                            showinfo("Suppression Réussi",f"Vous avez supprimé la facture {nomArticle}")
+                            self.TableauArticles(530)
+                        else:
+                            showwarning("Echec de suppression","Veuillez vous assurer que la facture a un solde de 0.0")
                         # Ajouter le script pour supprimer une vente
-                        pass
+                        
 
         
 
@@ -869,8 +894,25 @@ class GestionVente :
 
                     # Verify stock availability
                     quantite_demande = int(item[2])
+                    
+                    stock=Stock_back("",0,0)
+                    # Vérification de la disponibilité du stock et interaction avec l'utilisateur
+                    quantite_restante = stock.get_stock_restant_produit(self.curseur, item[0])[1][1]
+                    nom_produit = stock.get_stock_restant_produit(self.curseur, item[0])[1][0]
+                    if quantite_restante < quantite_demande:
+                        # Demander à l'utilisateur s'il veut prendre la quantité restante
+                        prendre_tout = askyesno("Stock insuffisant", f'La quantité restante pour le produit "{nom_produit}" est inférieure à la quantité demandée ({quantite_demande}).\nVoulez-vous prendre tout le stock restant ({quantite_restante}) ?')
+                        if prendre_tout:
+                            quantite_demande = quantite_restante  # Ajuster la quantité demandée à la quantité restante
+                        else:
+                            continue  # Passer à l'article suivant sans effectuer de vente pour cet article
+
+                    # Suite de la logique pour effectuer la vente...
+                    
                     quantite_dispo, stock =self.chercher_stock_fifo(item[0])
+                    
                     print("la quantite dispo est", quantite_dispo)
+                    
 
                     # Check if stock is sufficient
                     if quantite_dispo >= quantite_demande:

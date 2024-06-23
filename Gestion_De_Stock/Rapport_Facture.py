@@ -78,8 +78,8 @@ class FacturePDF :
         L=[130,130]
         H=[25,40,20]
         DataHeader=[["Mson. DANIELLO","Facture"],
-        ["N° d'Impôt : A1206219Z \nTéléphone : +243 997 129 073 \n Goma / R.D.C",f"N° {data[0]['num_fac']}\nGoma, le {data[0]['date_fac'].date().strftime("%d/%m/%Y")}"],
-        [f'Mr,Mme {data[0]['nom_client']} ']
+        ["N° d'Impôt : A1206219Z \nTéléphone : +243 997 129 073 \n Goma / R.D.C", f"N° {data[0]['num_fac']}\nGoma, le {data[0]['date_fac'].date().strftime('%d/%m/%Y')}"],
+        [f"Mr,Mme {data[0]['nom_client']} "]
         ]
 
         HeaderFacture=Table(DataHeader,colWidths=L,rowHeights=H, style=[('GRID', (0, 0), (-1, -1), 1, colors.white)])

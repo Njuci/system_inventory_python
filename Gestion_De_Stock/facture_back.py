@@ -25,8 +25,9 @@ class Facture_back:
         
     #function TO del 
     def del_fact(self,curseur,id_fac):
+        #print(type(id_fac))
         try:
-            curseur.execute('DELETE FROM tb_facture WHERE id_client=%s',(id_fac))
+            curseur.execute('DELETE FROM tb_facture WHERE id_client=%s',(id_fac,))
             return True
         except Exception as e:
             messagebox.showerror('Erreur',f'Erreur lors de la suppression de la facture  à la base de données : {e}')
@@ -137,7 +138,47 @@ class Facture_back:
             messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
             return False,[]
     
-    
+    #GET report of journey
+    def report_journey(self,curseur,date):
+        String_query="""
+                    SELECT
+                        DATE(tb_facture.date_facturation) AS date_vente,
+                        tb_stock.id_stock,
+                        tb_produit.designation_produit,
+                        SUM(tb_vente.quantite) AS quantite_vendue,
+                        tb_prix_vente.montant as pua,
+                        SUM(tb_vente.quantite * tb_prix_vente.montant) AS ventes,        
+                        SUM(tb_vente.quantite) AS quantite_sortie,
+                        tb_stock.prix_unitaire,
+                        
+                        SUM(tb_vente.quantite * tb_stock.prix_unitaire) AS total_sorti,
+                        SUM(tb_vente.quantite * tb_prix_vente.montant)-SUM(tb_vente.quantite * tb_stock.prix_unitaire) as marge
+                    FROM
+                        tb_vente
+                    JOIN
+                        tb_facture ON tb_facture.id_facture = tb_vente.id_facture
+                    JOIN
+                        tb_produit ON tb_vente.id_produit = tb_produit.id_produit
+                    JOIN
+                        tb_prix_vente ON tb_vente.id_pv = tb_prix_vente.id_pv
+                    JOIN
+                        tb_stock ON tb_vente.id_stock = tb_stock.id_stock
+                        
+                    where date(tb_facture.date_facturation)=%s
+                    GROUP BY
+                        DATE(tb_facture.date_facturation), tb_produit.designation_produit, tb_stock.id_stock,tb_prix_vente.id_pv
+                        
+
+                    ORDER BY
+                        DATE(tb_facture.date_facturation)       
+        """
+        try:
+            curseur.execute(String_query,(date,))
+            return True,curseur.fetchall()
+        except Exception as e:
+            messagebox.showerror('Erreur',f'Erreur {e}')
+            return False,[]
+            
     
     
     

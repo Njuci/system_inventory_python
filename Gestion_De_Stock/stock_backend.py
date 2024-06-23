@@ -42,30 +42,33 @@ class Stock_back:
     #get_stock
     def get_stock_restant(self,curseur):
         try:
-            string_query=f"""SELECT 
-    
-    p.designation_produit,
-    IFNULL(s.total_entree, 0) - IFNULL(v.total_vente, 0) AS stock_restant
-FROM 
-    tb_produit p
-LEFT JOIN (
-    SELECT 
-        id_produit,
-        SUM(nombre_piece) AS total_entree
-    FROM 
-        tb_stock
-    GROUP BY 
-        id_produit
-) s ON p.id_produit = s.id_produit
-LEFT JOIN (
-    SELECT 
-        id_produit,
-        SUM(quantite) AS total_vente
-    FROM 
-        tb_vente
-    GROUP BY 
-        id_produit
-) v ON p.id_produit = v.id_produit;
+            string_query=f"""
+            
+            
+                                                        SELECT 
+                                                
+                                                p.designation_produit,
+                                                IFNULL(s.total_entree, 0) - IFNULL(v.total_vente, 0) AS stock_restant
+                                            FROM 
+                                                tb_produit p
+                                            LEFT JOIN (
+                                                SELECT 
+                                                    id_produit,
+                                                    SUM(nombre_piece) AS total_entree
+                                                FROM 
+                                                    tb_stock
+                                                GROUP BY 
+                                                    id_produit
+                                            ) s ON p.id_produit = s.id_produit
+                                            LEFT JOIN (
+                                                SELECT 
+                                                    id_produit,
+                                                    SUM(quantite) AS total_vente
+                                                FROM 
+                                                    tb_vente
+                                                GROUP BY 
+                                                    id_produit
+                                            ) v ON p.id_produit = v.id_produit;
 
                                                     """
     
@@ -76,8 +79,54 @@ LEFT JOIN (
             messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
           
             return False,[]
+    #get stock restant par produit
+    def get_stock_restant_produit(self,curseur,id_produit):
+        try:
+            string_query="""
+            
+            
+                                                        SELECT 
+                                                
+                                                p.designation_produit,
+                                                IFNULL(s.total_entree, 0) - IFNULL(v.total_vente, 0) AS stock_restant
+                                            FROM 
+                                                tb_produit p
+                                            LEFT JOIN (
+                                                SELECT 
+                                                    id_produit,
+                                                    SUM(nombre_piece) AS total_entree
+                                                FROM 
+                                                    tb_stock
+                                                GROUP BY 
+                                                    id_produit
+                                            ) s ON p.id_produit = s.id_produit
+                                            LEFT JOIN (
+                                                SELECT 
+                                                    id_produit,
+                                                    SUM(quantite) AS total_vente
+                                                FROM 
+                                                    tb_vente
+                                                GROUP BY 
+                                                    id_produit
+                                            ) v ON p.id_produit = v.id_produit
+                                            
+                                            where p.id_produit=%s
+                                            ;
+
+                                                    """
+    
+            curseur.execute(string_query,(id_produit,))
+            return True,curseur.fetchone()
+        
+        except Exception as e:
+            messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
+          
+            return False,[]
     
     
+    
+    
+        
     def get_all_stock(self,curseur):
         try:
             curseur.execute('SELECT * FROM tb_stock')
