@@ -5,7 +5,6 @@ create table  tb_produit(
     id int auto_increment unique key,
 id_produit varchar(10) primary key,
 designation_produit varchar(30) unique
-
 );
 create table tb_stock(
     id int auto-increment unique key,

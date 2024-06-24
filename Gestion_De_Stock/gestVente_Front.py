@@ -97,7 +97,13 @@ class GestionVente :
         self.TableauArticles(530)
 
     def genererRapportJournalier(self):
-        self.RapportPDF.genererRapportJournalier([])
+        if (self.ListeDateVente.get()==""):
+            showwarning("GEST-DANIELLO","Veuillez selectionner la date de vente")
+        else:
+            fact=Facture_back('')
+            data=fact.report_journey(self.curseur,self.ListeDateVente.get())
+            print("Data Facture",data)
+            self.RapportPDF.genererRapportJournalier([])
         
     def FormulaireVente(self):
         #Formulaire de ventes 

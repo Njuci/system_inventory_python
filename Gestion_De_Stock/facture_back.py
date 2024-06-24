@@ -135,7 +135,7 @@ class Facture_back:
             curseur.execute(string_query,(date,))
             return True,curseur.fetchall()
         except Exception as e:
-            messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
+            messagebox.showerror('Erreur',f'Erreur  : {e}')
             return False,[]
     
     #GET report of journey
