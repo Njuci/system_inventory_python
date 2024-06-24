@@ -164,7 +164,7 @@ class Facture_back:
                     JOIN
                         tb_stock ON tb_vente.id_stock = tb_stock.id_stock
                         
-                    where date(tb_facture.date_facturation)=%s
+                    where date_format(tb_facture.date_facturation,\'%d-%m-%Y\')=%s
                     GROUP BY
                         DATE(tb_facture.date_facturation), tb_produit.designation_produit, tb_stock.id_stock,tb_prix_vente.id_pv
                         
