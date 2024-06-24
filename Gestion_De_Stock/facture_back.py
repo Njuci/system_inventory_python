@@ -27,7 +27,7 @@ class Facture_back:
     def del_fact(self,curseur,id_fac):
         #print(type(id_fac))
         try:
-            curseur.execute('DELETE FROM tb_facture WHERE id_client=%s',(id_fac,))
+            curseur.execute('DELETE FROM tb_facture WHERE id_facture=%s',(id_fac,))
             return True
         except Exception as e:
             messagebox.showerror('Erreur',f'Erreur lors de la suppression de la facture  à la base de données : {e}')

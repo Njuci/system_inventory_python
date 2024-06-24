@@ -530,7 +530,7 @@ class GestionVente :
                 self.bouton_Detail.configure( command=lambda article=item[2]:HandleClickDetails(article))
                 self.bouton_Sup= Button(self.label,bg='#961919',text='Sup',relief='flat', font =('Segoe UI',9),fg='white')
                 self.bouton_Sup.place(relx=0.85,rely=0.25,relwidth=0.1, height=26)
-                self.bouton_Sup.configure( command=lambda article=item[0]:HandleClickDelete(article))
+                self.bouton_Sup.configure( command=lambda article=item[2]:HandleClickDelete(article))
 
                 window_id = self.canvas.create_window(20, y, anchor=W, window=self.label)  # Adjust x-position (20 here) as needed
                 y += self.label.winfo_reqheight() + 5
