@@ -102,8 +102,7 @@ class GestionVente :
         else:
             fact=Facture_back('')
             data=fact.report_journey(self.curseur,self.ListeDateVente.get())
-            print("Data Facture",data)
-            self.RapportPDF.genererRapportJournalier([])
+            self.RapportPDF.genererRapportJournalier(data[1],self.ListeDateVente.get())
         
     def FormulaireVente(self):
         #Formulaire de ventes 
