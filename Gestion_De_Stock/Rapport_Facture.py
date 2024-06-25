@@ -45,7 +45,7 @@ class FacturePDF :
             # Calcul du total
             for item in (produits):
                 total_ht+=item[4]
-                ListeArticleFacture.append((item[1],item[3],f'{item[2]}$',item[4]))
+                ListeArticleFacture.append((item[1],item[3],f'{item[2]}$',f'{item[4]} $'))
        
 
         hauteurDynamique=80
@@ -235,9 +235,13 @@ class FacturePDF :
         ])
         table_produits.setStyle(style)
         # Total HT, TVA, TTC
+        if total_marge<0:
+            message_marge=f'vous avez réalisé une perte de {abs(total_marge)} $'
+        else:
+            message_marge=f'vous avez réalisé un bénéfice de {abs(total_marge)} $'
 
         elements.append(Table([["",],]))
-        Footer=Table([[f"Vous avez vendu les marchandises de {total_vente} $ en date du {date} \n dont vous avez acheté à {total_achat} $, vous avez {total_marge} $ comme bénéfice"]],style=[('GRID', (0, 0), (-1, -1), 1, colors.black)])
+        Footer=Table([[f"Vous avez vendu les marchandises de {total_vente} $ en date du {date} \n dont vous avez acheté à {total_achat} $, {message_marge}"]],style=[('GRID', (0, 0), (-1, -1), 1, colors.black)])
         elements.append(Footer)
 
 

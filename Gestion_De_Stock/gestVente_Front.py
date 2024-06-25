@@ -82,12 +82,30 @@ class GestionVente :
             listeDate.append(i[0])
         self.ListeDateVente['values']=listeDate 
         self.ListeDateVente.bind("<<ComboboxSelected>>",self.On_element_selected)
+        self.ListeDateVente.bind("<KeyRelease>",self.on_changeDate)
+        self.dataDateFac=listeDate 
 
          #----------------------------Tab section -------------------------------
-        
-
         self.TableauArticles(530)
         self.listeArtticle=[]
+    def on_changeDate(self,event):
+            # Get the current text from the entry widget
+            input_str =self.ListeDateVente.get()
+            # Filter the data based on the input
+            filtered_data = [x for x in self.dataDateFac if x.startswith(input_str)]
+            # Update the combobox values with the filtered data
+            self.ListeDateVente['values'] = filtered_data
+      
+            # Clear the combobox selection if no matches
+            if filtered_data:
+                if(len(filtered_data)<=2):
+                   self.ListeDateVente.set(filtered_data[0])
+                   self.filtre_date=True
+                   self.TableauArticles(530)
+            else:
+                self.ListeDateVente['values'] = filtered_data
+
+
     def On_element_selected(self,event):
         self.filtre_date=True
         self.TableauArticles(530)
@@ -135,7 +153,7 @@ class GestionVente :
         self.NomClient.place(relx=0.00,rely=0.1,relwidth=0.99, height=26)
         self.NomClient['values']=self.ComboClients
         self.NomClient.bind("<<ComboboxSelected>>")
-
+        self.NomClient.bind("<KeyRelease>",lambda event: on_change(event))
 
         #Buttons Actions
         self.bouton_enregistrer= Button(self.VenteForm,bg='white',text='Enregistrer',relief='groove', font =('Segoe UI',9),fg='#416b70',command=lambda :AddVente())
@@ -171,6 +189,20 @@ class GestionVente :
             self.message = Label(self.VenteForm, text="pas d'articles selectionnés ",font =('Segoe UI',12),fg='#adabab',bg='white')
             self.message.place(relx=0.02,rely=0.68,relwidth=0.9)
         self.numberInput=0
+        def on_change(event):
+            # Get the current text from the entry widget
+            input_str = self.NomClient.get()
+            # Filter the data based on the input
+            filtered_data = [x for x in self.ComboClients if x.startswith(input_str)]
+
+            # Update the combobox values with the filtered data
+            self.NomClient['values'] = filtered_data
+            print(filtered_data)
+
+            # Clear the combobox selection if no matches
+            if filtered_data:
+                if(len(filtered_data)<=2):
+                    self.NomClient.set(filtered_data[0])
 
         def AddVente():
             if(self.NomClient.get()!=""):
@@ -434,7 +466,6 @@ class GestionVente :
             if result :
                 if len(self.listeArticleFacture)!=0:
                     self.RapportPDF.genererFacture([self.infos_detail_facture,self.listeArticleFacture])
-                    showinfo(nom[0],'Succes')
                 else :
                     showwarning(nom[0],'Cette facture n\'a pas des produits')
             else :
@@ -838,6 +869,8 @@ class GestionVente :
             self.inputIDPro=ttk.Combobox(self.ContLigne,font =('Segoe UI',10))
             self.inputIDPro.place(relx=0.0,rely=0.0,relwidth=0.35, height=26)
             self.inputIDPro['values']=self.listeArtticle2
+            self.inputIDPro.bind("<KeyRelease>",self.on_changeCombo)
+
             
 
             self.inputQnt=Entry(self.ContLigne,font =('Segoe UI',10),bg='white')
@@ -852,6 +885,17 @@ class GestionVente :
             self.TitreTotal=Label(self.VenteForm,font =('Segoe UI bold',12),bg='white',text='Total')
             self.TitreTotal.place(relx=0.00,rely=0.8,relwidth=0.15, height=26)
             self.Total_fac()
+    def on_changeCombo(self,event):
+            # Get the current text from the entry widget
+            input_str =self.inputIDPro.get()
+            # Filter the data based on the input
+            filtered_data = [x for x in self.listeArtticle2 if x.startswith(input_str)]
+            # Update the combobox values with the filtered data
+            self.inputIDPro['values'] = filtered_data
+            # Clear the combobox selection if no matches
+            if filtered_data:
+                if(len(filtered_data)<=2):
+                   self.inputIDPro.set(filtered_data[0])
     def Total_fac(self):
         if len(self.listeArtticle)==0:
             self.TitreTotal=Label(self.VenteForm,font =('Segoe UI bold',12),bg='white',text='00 CDF')
@@ -863,20 +907,6 @@ class GestionVente :
             
             self.TitreTotal=Label(self.VenteForm,font =('Segoe UI bold',12),bg='white',text= str(total)+' CDF')
             self.TitreTotal.place(relx=0.5,rely=0.8,relwidth=0.6, height=26)
-
-        
-    
-
-
-
-        
-
-
-
-            
-
-
-
 
 # 
     def transaction_ajout_facture2(self, client_id):
