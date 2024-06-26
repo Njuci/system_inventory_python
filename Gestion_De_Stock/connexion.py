@@ -9,6 +9,7 @@ class Connexion_Frontend:
     def __init__(self):
         self.fen = Tk()
         self.fen.title("DANIELLO GEST-STOCK")
+        self.fen.iconbitmap("iconnegest.ico")
         self.fen.geometry("800x600")
         self.fen.config(bg="#ebf4f5")
         self.fen.resizable(width=True,height=True)

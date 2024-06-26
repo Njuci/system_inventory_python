@@ -17,6 +17,7 @@ class MenuPrincipaleFrontend:
         self.fen = Tk()
         self.fen.title("DANIELLO GEST-STOCK")
         self.fen.geometry("1170x600")
+        self.fen.iconbitmap("iconnegest.ico")
         self.fen.resizable(width=True,height=True)
         self.compte=compte
         self.con=con
