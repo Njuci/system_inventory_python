@@ -92,17 +92,35 @@ class Facture_back:
             return False,[]
     #get item by id_facture
     def get_item_by_id_fact(self,curseur,id_fac):
+        #somme_ventes d'un produit sure une facture
+                
+        
+        
+        
         string_query="""
-                        SELECT
-                            v.id_vente,pr.designation_produit,pv.montant as pu,v.quantite,
-                            pv.montant * v.quantite AS montant_total_a_payer
-                        FROM
-                            tb_facture f
-                        JOIN
-                            tb_vente v ON f.id_facture = v.id_facture
-                        JOIN
-                            tb_prix_vente pv ON v.id_pv = pv.id_pv Join tb_produit pr on  v.id_produit=pr.id_produit
-                            where f.id_facture=%s"""
+                                            
+                                    SELECT
+                                        pr.id_produit,
+                                        pr.designation_produit,
+                                        pv.montant AS prix_unitaire,
+                                        sum(v.quantite),
+                                        SUM(pv.montant * v.quantite) AS montant_total_par_produit
+                                    FROM
+                                        tb_facture f
+                                    JOIN
+                                        tb_vente v ON f.id_facture = v.id_facture
+                                    JOIN
+                                        tb_prix_vente pv ON v.id_pv = pv.id_pv
+                                    JOIN
+                                        tb_produit pr ON v.id_produit = pr.id_produit
+                                    where f.id_facture=%s
+                                    GROUP BY
+                                        pr.id_produit, pr.designation_produit, pv.montant,f.id_facture ;
+
+                        
+                        
+                        
+                        """
         try:
             curseur.execute(string_query,(id_fac,))
             return True,curseur.fetchall()

@@ -18,6 +18,7 @@ class GestionStock :
         self.config=self.configApp.Configuration(self)
         self.couleur=self.configApp.ColeursApp(self)
         self.verification=EntryVerification()
+        self.id_asup=None
 
         #Appprovisionnement UI 
         self.FormulaireApro()
@@ -258,6 +259,7 @@ class GestionStock :
         data=stock.get_detail_stock_produit(self.curseur,stock.id_produit)[1]
         a=1
         for item in data:
+            
 
             if a==1:
                 # Create a frame for each item
@@ -282,7 +284,7 @@ class GestionStock :
                 self.title = Label(self.label, text=item[4], font=('Segoe UI ', 9), fg='#adabab', bg='white').place(relx=0.66, rely=0.25, relwidth=0.17)
                 self.bouton_Sup= Button(self.label,bg='#961919',text='Sup',relief='flat', font =('Segoe UI',9),fg='white')
                 self.bouton_Sup.place(relx=0.85,rely=0.25,relwidth=0.1, height=26)
-                self.bouton_Sup.configure( command=lambda stock=item[0]:SupprimerStock(stock))
+                self.bouton_Sup.configure( command=lambda stock=(item[5],item[4],nomArticle):SupprimerStock(stock))
                 
                 window_id = self.canvas.create_window(20, y, anchor=W, window=self.label)  # Adjust x-position (20 here) as needed
                 y += self.label.winfo_reqheight() + 5
@@ -302,7 +304,7 @@ class GestionStock :
                 self.title = Label(self.label, text=item[4], font=('Segoe UI ', 9), fg='#adabab', bg='white').place(relx=0.66, rely=0.25, relwidth=0.17)
                 self.bouton_Sup= Button(self.label,bg='#961919',text='Sup',relief='flat', font =('Segoe UI',9),fg='white')
                 self.bouton_Sup.place(relx=0.85,rely=0.25,relwidth=0.1, height=26)
-                self.bouton_Sup.configure( command=lambda stock=item[0]:SupprimerStock(stock))
+                self.bouton_Sup.configure( command=lambda stock=(item[5],item[4],nomArticle):SupprimerStock(stock))
 
                 window_id = self.canvas.create_window(20, y, anchor=W, window=self.label)  # Adjust x-position (20 here) as needed
                 y += self.label.winfo_reqheight() + 5
@@ -317,8 +319,23 @@ class GestionStock :
         self.canvas.config(scrollregion=(0, 0, self.canvas.winfo_width(), self.canvas.winfo_height() + y))
 
         def SupprimerStock(item):
-            #Veuillez placer une boite de dialogue de demande d'avis d'utilisateur oui ou non
-            pass
+        
+        
+            stock=Stock_back('',0,0)
+            if askyesno('Suppression','Voulez-vous vraiment supprimer cet article du stock?'):
+                if item[1]==0:
+                    
+                    if stock.del_stock(self.curseur,item[0]):
+                        showinfo('Suppression','Suppression Réussie')
+                        self.DetailsStock(item[2],450)
+                    else:
+                        showinfo('Suppression','Suppression Echouée')
+                #Veuillez placer une boite de dialogue de demande d'avis d'utilisateur oui ou non
+                else:
+                    showinfo('Suppression','Impossible de supprimer ce stock de cet article car il a été vendu')
+                    #Veuillez place une boite de dialogue de demande d'avis d'utilisateur oui ou non
+        
+
     
 
 

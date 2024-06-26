@@ -250,7 +250,6 @@ class GestionVente :
             
             
             if result :
-                print(index)
                 self.listeArticleSupprime.append(self.listeArticleFacture[index])
                 self.listeArticleFacture.pop(index)
                 self.EtatFacture=True
@@ -266,8 +265,10 @@ class GestionVente :
                 
                 if len(self.listeArticleSupprime)!=0:
                     for i in self.listeArticleSupprime:
+                        
                         if supr_vente.del_vente(self.curseur,i[0]):
                             f=True
+                      
                 showinfo('Confirmation','Modification enregistrée')    
                 self.FormulaireVente()
                 self.EtatFacture=False      

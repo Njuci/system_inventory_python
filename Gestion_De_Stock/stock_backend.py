@@ -155,7 +155,7 @@ class Stock_back:
                             tb_stock.date_entree AS 'Date d entrée',
                             tb_stock.nombre_piece AS 'Nombre de pièce en stock',
                             COALESCE(MAX(tb_facture.date_facturation), 'Pas encore vendu') AS 'Date de sortie',
-                            COALESCE(SUM(tb_vente.quantite), 0) AS 'Quantité sortie' 
+                            COALESCE(SUM(tb_vente.quantite), 0) AS 'Quantité sortie',tb_stock.id_stock
                             FROM tb_stock
                             LEFT JOIN tb_vente ON tb_stock.id_stock = tb_vente.id_stock
                             JOIN tb_produit ON tb_produit.id_produit = tb_stock.id_produit

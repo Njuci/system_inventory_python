@@ -9,6 +9,7 @@ class GestionClient :
         self.fen = fen
         self.configApp=InfosApp
         self.db=con
+        self.id_achange=None
         self.curseur=self.db.get_curseur()
         self.FakeData=FakeData()
         self.verification=EntryVerification()
@@ -77,6 +78,7 @@ class GestionClient :
 
         self.NumEntry.insert(0,data[3])
         self.NomEntry.insert(0,data[2])
+        self.id_achange=data[1]
 
         #Buttons Actions
         self.bouton_enregistrer= Button(self.ClientForm,bg='white',text='Enregistrer',relief='groove', font =('Segoe UI',9),fg='#416b70',command=lambda:AjoutClient())
@@ -104,7 +106,27 @@ class GestionClient :
         def ModifierClient():
             if self.NomEntry.get()!="" or self.NumEntry.get()!="" :
                 if self.verification.Verification(self.NomEntry.get())==False and self.verification.Verification(self.NumEntry.get())==True :
-                    pass
+                   
+                    if self.id_achange!=None:
+                        if askyesno("Modification","Voulez-vous vraiment modifier les cordonnées du client"):
+                           client=Client_back(self.NomEntry.get(),self.NumEntry.get())
+                           if client.update_client(self.curseur,self.id_achange):
+                               showinfo("Succès","Client modifié") 
+                            
+                           self.NomEntry.delete(0,END)
+                           self.NumEntry.delete(0,END)
+                           self.id_achange=None
+                           data=client.get_all_client(self.curseur)[1]
+                           self.TableauClients(560,data)
+                        
+                        else:
+                            
+                            self.NomEntry.delete(0,END)
+                            self.NumEntry.delete(0,END)
+                            self.id_achange=None
+                        
+                        print(self.id_achange)
+                
                 else:
                     showwarning(self.config[0],'Veuillez respecter le type de données ')
             else :
@@ -143,6 +165,7 @@ class GestionClient :
         t=0.1
         a=1
         for item in data:
+           
             if a==1:
                 # Create a frame for each item
                 self.label = Frame(self.canvas, bg='white',height=13,width=TailTabl)
@@ -154,7 +177,7 @@ class GestionClient :
 
                 self.bouton_Detail= Button(self.label,bg='#ebf4f5',text='Modifier',relief='flat', font =('Segoe UI',9),fg='#adabab')
                 self.bouton_Detail.place(relx=0.72,rely=0.25,relwidth=0.25, height=26)
-                self.bouton_Detail.configure( command=lambda article=item:HandleUpdateClient(article))
+                self.bouton_Detail.configure( command=lambda article=item[1]:HandleUpdateClient(article))
                 window_id = self.canvas.create_window(20, y, anchor=W, window=self.label)  # Adjust x-position (20 here) as needed
                 y += self.label.winfo_reqheight() + 5
 
@@ -171,7 +194,7 @@ class GestionClient :
 
                 self.bouton_Detail= Button(self.label,bg='#961919',text='Supprimer',relief='flat', font =('Segoe UI',9),fg='white')
                 self.bouton_Detail.place(relx=0.67,rely=0.25,relwidth=0.15, height=26)
-                self.bouton_Detail.configure( command=lambda article=item[0]:HandleDeleteClient(article))
+                self.bouton_Detail.configure( command=lambda article=item[1]:HandleDeleteClient(article))
 
                 self.bouton_Detail= Button(self.label,bg='#ebf4f5',text='Modifier',relief='flat', font =('Segoe UI',9),fg='#adabab')
                 self.bouton_Detail.place(relx=0.84,rely=0.25,relwidth=0.15, height=26)
@@ -193,7 +216,7 @@ class GestionClient :
 
                 self.bouton_Detail= Button(self.label,bg='#961919',text='Supprimer',relief='flat', font =('Segoe UI',9),fg='white')
                 self.bouton_Detail.place(relx=0.67,rely=0.25,relwidth=0.15, height=26)
-                self.bouton_Detail.configure( command=lambda article=item[0]:HandleDeleteClient(article))
+                self.bouton_Detail.configure( command=lambda article=item[1]:HandleDeleteClient(article))
 
                 self.bouton_Detail= Button(self.label,bg='#ebf4f5',text='Modifier',relief='flat', font =('Segoe UI',9),fg='#adabab')
                 self.bouton_Detail.place(relx=0.84,rely=0.25,relwidth=0.15, height=26)
@@ -214,10 +237,25 @@ class GestionClient :
             
             #modification de l'article
             def HandleUpdateClient(data):
+                
+                
                 self.formulaireClient(data)
             
             def HandleDeleteClient(id):
                 # veuillez mettre la boite de dialogue de demande d'avis oui ou non
-                pass
-
+                if askyesno("Suppression Client","Voulez-vous vraiment supprimer ce client"):
+                    client=Client_back('','')
+                    #verifier si la somme des factures de ce client est egale a zero on le supprime sinon on affiche un message d'erreur
+                    fact=client.get_facture_by_client(self.curseur,id)
+                    if fact[0]==True:
+                        if fact[1][0][2]==0:
+                            if client.del_client(self.curseur,id):
+                                showinfo("Succès","Client supprimé") 
+                                client=Client_back('','')
+                                data=client.get_all_client(self.curseur)[1]
+                                self.TableauClients(560,data)
+                        else:
+                            showwarning("Erreur","Impossible de supprimer ce client car il a des factures, pour le supprimer, veuillez vous assurer que toutes ses factures sont Nulles")
+                    else:
+                        showwarning("Erreur","Impossible de supprimer ce client car il a des factures. pour le supprimer, veuillez vous assurer que toutes ses factures sont Nulles")
     #Details stock 

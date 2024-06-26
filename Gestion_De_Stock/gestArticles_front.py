@@ -205,10 +205,19 @@ class GestionArticle :
         def ModifierArticle():
             if self.NomArticleEntry.get()!="":
                 if  self.verification.Verification(self.NomArticleEntry.get())==False:
-                    pass
+                    product=Product_back(self.NomArticleEntry.get())
+                    if product.update_produit(self.curseur,self.id_art[1]):
+                        showinfo('Modification','Article modifié avec succès')
+                        remplirDonnee()
+                        self.NomArticleEntry.delete(0,END)
+                        self.id_art=None
+                        
+                        
                 else:
+                    self.id_art=None
                     showwarning(self.config[0],'Vous avez entré des valeurs numériques')
             else :
+                    self.id_art=None
                     showwarning(self.config[0],"Veuillez entrer le nom de l'article")
         
             
@@ -329,6 +338,7 @@ class GestionArticle :
             
             #modification de l'article
             def HandleUpdateArticle(nom):
+                self.id_art=nom
                 self.FormulaireArticle(nom[0])
             
 

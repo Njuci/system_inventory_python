@@ -21,6 +21,29 @@ class Client_back:
             messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
             curseur.rollback()
             return False
+    #function to get a total amount client by id
+    def get_facture_by_client(self,curseur,id_client):
+        string_query="""
+                       SELECT
+                        c.id_client,
+                        c.nom_cli,
+                        COALESCE(SUM(pv.montant * v.quantite), 0) AS total_facture
+                        FROM tb_facture f
+                        LEFT JOIN tb_client c ON f.id_client = c.id_client
+                        LEFT JOIN tb_vente v ON f.id_facture = v.id_facture
+                        LEFT JOIN tb_prix_vente pv ON v.id_produit = pv.id_produit
+                        WHERE c.id_client=%s
+                        
+                        GROUP BY c.id_client, c.nom_cli;
+
+        
+                    """
+        try:
+            curseur.execute(string_query,(id_client,))
+            return True,curseur.fetchall()
+        except Exception as e:
+            messagebox.showerror('Erreur',f'Erreur lors de la recuperation des données  à la base de données : {e}')
+            return False,[]
     #function update a informations 
     def update_client(self,curseur,id_client):
         try:
@@ -34,7 +57,7 @@ class Client_back:
     #function TO del 
     def del_client(self,curseur,id_client):
         try:
-            curseur.execute('DELETE FROM tb_client WHERE id_client=%s',(id_client))
+            curseur.execute('DELETE FROM tb_client WHERE id_client=%s',(id_client,))
             return True
         except Exception as e:
             messagebox.showerror('Erreur',f'Erreur lors de la suppression du client  à la base de données : {e}')

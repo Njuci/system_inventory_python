@@ -19,7 +19,7 @@ class Product_back:
     #function update a informations 
     def update_produit(self,curseur,id_produit):
         try:
-            curseur.execute('UPDATE tb_produit SET designation_produit=%s WHERE id_produit=%s',(id_produit))
+            curseur.execute('UPDATE tb_produit SET designation_produit=%s WHERE id_produit=%s',(self.nom_produit,id_produit,))
             return True
         except Exception as e:
             tkinter.messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
