@@ -4,6 +4,7 @@ from fakeData import FakeData
 from verificationEntry import EntryVerification
 from tkinter.messagebox import askyesno,showinfo,showwarning
 from client_backend import Client_back
+
 class GestionClient :
     def __init__(self,fen,con):
         self.fen = fen
@@ -125,7 +126,7 @@ class GestionClient :
                             self.NumEntry.delete(0,END)
                             self.id_achange=None
                         
-                        print(self.id_achange)
+                  
                 
                 else:
                     showwarning(self.config[0],'Veuillez respecter le type de données ')
@@ -229,19 +230,10 @@ class GestionClient :
             self.canvas.config(scrollregion=(0, 0, self.canvas.winfo_width(), self.canvas.winfo_height() + y))
     
 
-
-             
-            def HandleClickDetails(nomArticle):
-            #-----------------Details stock-----------------------
-                print(nomArticle)
+        def HandleUpdateClient(data):
+            self.formulaireClient(data)
             
-            #modification de l'article
-            def HandleUpdateClient(data):
-                
-                
-                self.formulaireClient(data)
-            
-            def HandleDeleteClient(id):
+        def HandleDeleteClient(id):
                 # veuillez mettre la boite de dialogue de demande d'avis oui ou non
                 if askyesno("Suppression Client","Voulez-vous vraiment supprimer ce client"):
                     client=Client_back('','')

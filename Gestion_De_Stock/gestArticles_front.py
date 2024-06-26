@@ -86,12 +86,12 @@ class GestionArticle :
             # Filter the data based on the input
             
             filtered_data = [x for x in data[1] if x[1].startswith(input_str)]
-            print(filtered_data)
+       
             # Update the combobox values with the filtered data
             # Clear the combobox selection if no matches
             if filtered_data:
                 if(len(filtered_data)<=2):
-                    print(filtered_data)
+             
                     self.TableauArticles(420,[0,filtered_data])
             if input_str == " ":
                 self.TableauArticles(420,data)
@@ -165,11 +165,6 @@ class GestionArticle :
         #Buttons Actions
         self.bouton_enregistrerPrix= Button(self.ClientForm,bg='white',text='Valider',relief='groove', font =('Segoe UI',9),fg='#416b70',command=lambda:AjoutPrix())
         self.bouton_enregistrerPrix.place(relx=0.2,rely=0.8,relwidth=0.5, height=30)
-
-
-        def DataSelected():
-            print("cl :"+self.ComboArticle.get())
-       
 
         def AjoutPrix():
             # Vérification des champs saisis
@@ -330,7 +325,7 @@ class GestionArticle :
 
             def HandleClickDetails(nomArticle):
             #-----------------Details stock-----------------------
-               # print(nomArticle)
+     
                
                 def Capture():
                     self.DetailsStock(nomArticle,300)
@@ -381,7 +376,7 @@ class GestionArticle :
         pv=Prix_vente_back('','')
         
         data = pv.get_prix_vente(self.curseur,nomArticle[1])[1]
-        print(data)
+
         a=1
        
         for item in data:
@@ -435,7 +430,7 @@ class GestionArticle :
     
     def AjoutPrix(self):
             """Fonction permettant d'ajouter un nouveau prix de vente."""
-            print(self.ComboArticle.get())
+     
 
             if self.id_art is None:
                 showwarning(self.config[0], "Veuillez sélectionner un article")

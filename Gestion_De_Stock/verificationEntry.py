@@ -1,6 +1,5 @@
 from tkinter import *
 
-
 class EntryVerification :
     def __init__(self):
         pass

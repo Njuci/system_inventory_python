@@ -36,6 +36,7 @@ class GestionVente :
         self.listeChoix=[] 
         self.infos_detail_facture={}
         self.PanierArticle=0
+        self.ArticleSupprimer=[]
         prod=Product_back('')
         data=prod.get_all_produit(self.curseur)[1]
         product_list=[]
@@ -197,7 +198,7 @@ class GestionVente :
 
             # Update the combobox values with the filtered data
             self.NomClient['values'] = filtered_data
-            print(filtered_data)
+   
 
             # Clear the combobox selection if no matches
             if filtered_data:
@@ -228,21 +229,21 @@ class GestionVente :
 #-----------------------------------Fin formulaire de vente-----------------------------------
 
 #-------------------------------------------Visualisation de vente ------------------------------
-    def SupprimerProduits(self,index):
+    def SupprimerProduits(self,index,tot):
             result=askyesno("Confirmation","Voulez-vous vraiment supprimer ce produit sur cette Facture ?")
             #initialisation de la liste des produits
             
             info_total=Facture_back('').get_total_fact(self.curseur,self.select_facture)
-            print(info_total)
+          
             if info_total[0] and len(info_total[1])!=0:
                 total=info_total
             else:
                 total=(True, [('', 0.0)])
                 
                 
-            print(total)
+     
             inf=Facture_back('').get_client_by_id_fact(self.curseur,self.select_facture)[1][0]
-            print(inf)
+          
             self.infos_detail_facture['num_fac']=self.select_facture
             self.infos_detail_facture['date_fac']=inf[1]
             self.infos_detail_facture['nom_client']=inf[0]      
@@ -251,6 +252,7 @@ class GestionVente :
             
             if result :
                 self.listeArticleSupprime.append(self.listeArticleFacture[index])
+                self.ArticleSupprimer.append(tot)
                 self.listeArticleFacture.pop(index)
                 self.EtatFacture=True
                 
@@ -271,10 +273,12 @@ class GestionVente :
                       
                 showinfo('Confirmation','Modification enregistrée')    
                 self.FormulaireVente()
+                self.ArticleSupprimer=[]
                 self.EtatFacture=False      
                    
             else :
                 self.FormulaireVente()
+                self.ArticleSupprimer=[]
                 self.EtatFacture=False
         else :
                 self.FormulaireVente()
@@ -288,7 +292,19 @@ class GestionVente :
 
 
     def ActualiserDetails(self):
+        if len(self.ArticleSupprimer)==0 :
+            self.NomCli = Label(self.VenteForm, text="0",font =('Segoe UI bold',10),fg='red',bg='white')
+            self.NomCli.place(relx=0.35,rely=0.32)
+        else:
+            # calcul de somme total deja supprimee
+            total=0
+            for item in self.ArticleSupprimer:
+                total+=item
+            self.NomCli = Label(self.VenteForm, text=total,font =('Segoe UI bold',10),fg='red',bg='white')
+            self.NomCli.place(relx=0.35,rely=0.32)
+
         if len(self.listeArticleFacture)!=0:
+
             self.Articles=Frame(self.FrameFacture,bg='white')
             self.Articles.place(x=0, rely=0.48,relwidth=1,height=130)
 
@@ -348,7 +364,7 @@ class GestionVente :
 
                     self.Sup=Label(self.label,font =('Segoe UI',10),text="Sup",bg='#961919',fg="white")
                     self.Sup.place(relx=0.89,rely=0.0,relwidth=0.1, relheight=0.7)
-                    self.Sup.bind('<Double-Button-1>', lambda event,ide=index: self.SupprimerProduits(ide))
+                    self.Sup.bind('<Double-Button-1>', lambda event,ide=index,tot=item[4]: self.SupprimerProduits(ide,tot))
 
                     self.ligne=Frame(self.label,bg='#d6d4d4',height=-20).place(x=0, rely=0.9,relwidth=1)
                     self.incr+=0.2
@@ -374,7 +390,7 @@ class GestionVente :
 
                     self.Sup=Label(self.label,font =('Segoe UI',10),text="Sup",bg='#961919',fg="white")
                     self.Sup.place(relx=0.89,rely=0.0,relwidth=0.1, relheight=0.7)
-                    self.Sup.bind('<Double-Button-1>', lambda event,ide=index: self.SupprimerProduits(ide))
+                    self.Sup.bind('<Double-Button-1>', lambda event,ide=index,tot=item[4]: self.SupprimerProduits(ide,tot))
 
 
                     self.ligne=Frame(self.label,bg='#d6d4d4',height=-20).place(x=0, rely=0.9,relwidth=1)
@@ -431,8 +447,9 @@ class GestionVente :
 
         self.NomCli = Label(self.VenteForm, text=self.infos_detail_facture['total'],font =('Segoe UI bold',14),fg='black',bg='white')
         self.NomCli.place(relx=0.3,rely=0.25)
-  
-  
+
+        self.SearchClient = Label(self.VenteForm, text='Total Produit(s) Suprimé ',font =('Segoe UI',10),fg='black',bg='white')
+        self.SearchClient.place(relx=0.02,rely=0.32)
 
         #Buttons Actions
         self.bouton_enregistrer= Button(self.VenteForm,bg='white',text='Enregistrer',relief='groove', font =('Segoe UI',9),fg='#416b70',command=self.closeDetails)
@@ -511,7 +528,7 @@ class GestionVente :
             data=fact.get_fact_by_date(self.curseur,self.ListeDateVente.get())[1]
             total=fact.get_total_all_fact_for_date(self.curseur,self.ListeDateVente.get())[1][0][0]
             dataa=fact.get_fact_by_date(self.curseur,self.ListeDateVente.get())
-            print(dataa,"Total",total)
+         
             if total==None:
                 total=0.0
             self.LabelTotal=Label(self.RightContener,text=str(total),font =('Segoe UI bold',12),bg='#ebf4f5')
@@ -519,7 +536,6 @@ class GestionVente :
         else:
                 
             fact=Facture_back('')
-            
             data=fact.get_all_fact(self.curseur)[1]
             total=fact.get_total_all_fact(self.curseur)[1][0][0]
             if total==None:
@@ -608,7 +624,7 @@ class GestionVente :
             self.canvas.config(scrollregion=(0, 0, self.canvas.winfo_width(), self.canvas.winfo_height() + y))
 
             def HandleClickDelete(nomArticle):
-                print(nomArticle)
+              
                 
             #-----------------Details stock-----------------------
                 if self.EtatFacture :
@@ -653,7 +669,7 @@ class GestionVente :
         
 
             def HandleClickDetails(nomArticle):
-                print(nomArticle)
+              
                 self.select_facture=nomArticle
             #-----------------Details stock-----------------------
             
@@ -691,14 +707,15 @@ class GestionVente :
     #Details stock 
 
 
-    def SupprimerproduitSurDetails(self,index):
+    def SupprimerproduitSurDetails(self,index,tot):
             result=askyesno("Confirmation","Voulez-vous vraiment supprimer ce produit sur cette vente ?")
             if result :
-                print(index)
                 self.listeArtticle.pop(index)
                 self.actualiser()
     
     def actualiser(self):
+
+
         self.Articles=Frame(self.articleContent,bg='white')
         self.Articles.place(x=0, rely=0.04,relwidth=1,height=130)
 
@@ -759,7 +776,7 @@ class GestionVente :
 
                 self.Sup=Label(self.label,font =('Segoe UI',10),text="SUP",bg='red',fg="white")
                 self.Sup.place(relx=0.89,rely=0.0,relwidth=0.1, relheight=0.7)
-                self.Sup.bind('<Double-Button-1>', lambda event,ide=index: self.SupprimerproduitSurDetails(ide))
+                self.Sup.bind('<Double-Button-1>', lambda event,ide=index,tot=item[3]*item[4]: self.SupprimerproduitSurDetails(ide,tot))
 
                 self.ligne=Frame(self.label,bg='#d6d4d4',height=-20).place(x=0, rely=0.9,relwidth=1)
                 self.incr+=0.2
@@ -785,7 +802,7 @@ class GestionVente :
 
                 self.Sup=Label(self.label,font =('Segoe UI',10),text="SUP",bg='red',fg="white")
                 self.Sup.place(relx=0.89,rely=0.0,relwidth=0.1, relheight=0.7)
-                self.Sup.bind('<Double-Button-1>', lambda event,ide=index: self.SupprimerproduitSurDetails(ide))
+                self.Sup.bind('<Double-Button-1>', lambda event,ide=index,tot=item[3]*item[4]: self.SupprimerproduitSurDetails(ide,tot))
 
 
                 self.ligne=Frame(self.label,bg='#d6d4d4',height=-20).place(x=0, rely=0.9,relwidth=1)
@@ -911,7 +928,7 @@ class GestionVente :
 
 # 
     def transaction_ajout_facture2(self, client_id):
-        print('client', client_id)
+      
         fact = Facture_back(client_id)
         try:
             # Start transaction
@@ -920,13 +937,13 @@ class GestionVente :
             if fact.add_fact(self.curseur):
                 self.curseur.execute('SELECT MAX(id_facture) FROM tb_facture')
                 fact_id = self.curseur.fetchone()[0]
-                print('facture', fact_id)
+              
 
                 # Record each sale
                 for item in self.listeArtticle:
                     # Retrieve the selling price
                     prix = Prix_vente_back("", 0).get_last_pv(self.curseur, item[0])[1][0][0]
-                    print("le prix est", prix)
+                 
 
                     # Verify stock availability
                     quantite_demande = int(item[2])
@@ -947,14 +964,14 @@ class GestionVente :
                     
                     quantite_dispo, stock =self.chercher_stock_fifo(item[0])
                     
-                    print("la quantite dispo est", quantite_dispo)
+                   
                     
 
                     # Check if stock is sufficient
                     if quantite_dispo >= quantite_demande:
                         vente = Vente_back(item[0], stock, fact_id, prix, quantite_demande)
                         vente.add_vente(self.curseur)
-                        print(item[0], stock, fact_id, prix, quantite_demande)
+                    
                     else:
                         # Handle insufficient stock using FIFO
                         while quantite_dispo < quantite_demande:
@@ -968,8 +985,6 @@ class GestionVente :
                                 vente = Vente_back(item[0], stock, fact_id, prix, quantite_demande)
                                 vente.add_vente(self.curseur)
 
-                        if quantite_demande > 0:
-                            print("Stock insuffisant pour l'article", item[0])
 
                 # Commit transaction
                 self.db.db.commit()
@@ -992,13 +1007,13 @@ class GestionVente :
         # ...
         stock=Stock_back("",0,0).get_stock_dispo_id(self.curseur,id_produit)[1][0]
                             #verifier si le stock est suffisant
-                            #print("le stock est",stock[1])
+                      
                             
                             
         quantite_info=Stock_back("",0,0).get_stock_ecoule(self.curseur,stock[1])[1][0]
-        print("la quantite info est",quantite_info)
+     
 
         quantite_dispo=quantite_info[2]-quantite_info[3]
-                            #print("la quantite est",quantite_dispo)
+                         
         return quantite_dispo,stock[1]
                             

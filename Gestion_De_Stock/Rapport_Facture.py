@@ -36,7 +36,6 @@ class FacturePDF :
 
         # Liste des produits
         produits=data[1]
-        print(data[0]['num_fac'],"Data")
         ListeArticleFacture=[]
         a=0
         total_ht = 0

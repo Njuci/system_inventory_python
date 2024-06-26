@@ -1,7 +1,6 @@
 from tkinter.messagebox import showerror
 import mysql.connector
 
-
 class Connexion:
     def __init__(self,user,password):
         self.user=user

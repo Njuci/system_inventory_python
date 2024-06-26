@@ -33,7 +33,7 @@ class Product_back:
             return True
         except Exception as e:
             tkinter.messagebox.showerror('Erreur',f'Erreur lors de l\'ajout du client  à la base de données : {e}')
-            
+    
             return False
     #get_product
     def get_all_produit(self,curseur):

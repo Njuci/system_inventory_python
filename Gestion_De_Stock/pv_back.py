@@ -1,7 +1,6 @@
 
 from tkinter import messagebox
 
-
 class Prix_vente_back:
     def __init__(self,id_produit,montant):
         self.id_produit=id_produit

@@ -88,7 +88,7 @@ class GestionStock :
 
             # Update the combobox values with the filtered data
             self.NomArticle['values'] = filtered_data
-            print(filtered_data)
+   
 
             # Clear the combobox selection if no matches
             if filtered_data:
@@ -210,7 +210,7 @@ class GestionStock :
 
             def HandleClickDetails(nomArticle):
             #-----------------Details stock-----------------------
-                print(nomArticle)
+           
                 def Capture():
                     self.DetailsStock(nomArticle,450)
                 Capture()

@@ -1,5 +1,6 @@
 from tkinter import * 
 from fakeData import FakeData
+
 class Dashboard:
     def __init__(self,fen,con):
         self.fen = fen

@@ -8,21 +8,18 @@ from gestClient_front import GestionClient
 from gestArticles_front import GestionArticle 
 from gestStock_front import GestionStock
 
-
-
 class MenuPrincipaleFrontend:
     ver=0
     def __init__(self,Curseur,con,compte):
         self.Curseur=Curseur
         self.fen = Tk()
         self.fen.title("DANIELLO GEST-STOCK")
-        self.fen.geometry("1170x600")
-        self.fen.iconbitmap("iconnegest.ico")
+        self.fen.geometry("1200x600")
+        #self.fen.iconbitmap("iconnegest.ico")
         self.fen.resizable(width=True,height=True)
         self.compte=compte
         self.con=con
-        self.fen.minsize(1170,600)
-        self.fen.maxsize(1170,600)
+
 
         #les instances de la classe
         #Selection de l'annee active
@@ -54,6 +51,7 @@ class MenuPrincipaleFrontend:
         self.ArticleContent.place_forget()
 
         self.CreationMenu()
+        
        
 
     def CreationMenu(self):

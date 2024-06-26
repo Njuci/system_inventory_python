@@ -5,6 +5,7 @@ import PyPDF2
 window = tk.Tk()
 window.title("Visualiseur PDF")
 window.geometry("500x600")
+
 def open_pdf():
     try:
         file_path = filedialog.askopenfilename(title="Sélectionner un fichier PDF", filetypes=[("Fichiers PDF", "*.pdf")])

@@ -1,6 +1,5 @@
 from tkinter import messagebox
 
-
 class Facture_back:
     def __init__(self,id_cli):
         self.id_cli=id_cli
@@ -25,7 +24,7 @@ class Facture_back:
         
     #function TO del 
     def del_fact(self,curseur,id_fac):
-        #print(type(id_fac))
+ 
         try:
             curseur.execute('DELETE FROM tb_facture WHERE id_facture=%s',(id_fac,))
             return True

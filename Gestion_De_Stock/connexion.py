@@ -1,15 +1,15 @@
 import dashboard_Front
-from tkinter import *
 import tkinter as tk
+from tkinter import *
 from tkinter.messagebox import showerror,showwarning
 from login_back import Connexion
 import MenuPrincipale
 
 class Connexion_Frontend:
     def __init__(self):
-        self.fen = Tk()
+        self.fen =tk.Tk()
         self.fen.title("DANIELLO GEST-STOCK")
-        self.fen.iconbitmap("iconnegest.ico")
+        #self.fen.iconbitmap("iconnegest.ico")
         self.fen.geometry("800x600")
         self.fen.config(bg="#ebf4f5")
         self.fen.resizable(width=True,height=True)
@@ -38,13 +38,11 @@ class Connexion_Frontend:
     def connect_back(self):
         db=Connexion(self.idEnt.get(),self.mdEnt.get())
         if db.login():
-            
             Dash=MenuPrincipale.MenuPrincipaleFrontend(db.get_curseur(),db,self.idEnt.get())
             self.fen.destroy()
             Dash.fenetre().mainloop()
         else:
             showerror("Erreur","Nom d'utilisateur ou mot de passe incorrect")
     
-            
         
     

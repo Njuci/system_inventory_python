@@ -6,7 +6,7 @@ class InfosApp:
             "GEST - VENTE ",
         ]
         return data
-    
+
     def ColeursApp(self):
         data={
             "Background":"#ebf4f5",

@@ -24,21 +24,21 @@ class InventoryManagementSystem:
         self.db.autocommit = True
 
     def add_invoice(self, client_id):
-        print('Client:', client_id)
+
         invoice = Facture_back(client_id)
         self.start_transaction()
         if invoice.add_fact(self.db.cursor()):
             
             self.db.cursor().execute('select max(id_facture) from tb_facture')
             fact_id = self.db.cursor().fetchone()[0]
-            print('Invoice:', fact_id)
+           
             try:
                 for item in self.listeArtticle:
                     self.process_item(item, fact_id)
                 self.commit_transaction()
                 return True
             except Exception as e:
-                print("An error occurred:", e)
+               
                 self.rollback_transaction()
                 return False
         else:
@@ -51,10 +51,10 @@ class InventoryManagementSystem:
 
     def process_item(self, item, fact_id):
         prix = Prix_vente_back("", 0).get_last_pv(self.db.cursor(), item[0])[1][0][0]
-        print("Price is:", prix)
+  
         quantite_demande = int(item[2])
         quantite_dispo, stock = self.find_stock(item[0])
-        print("Available quantity is:", quantite_dispo)
+   
         if quantite_dispo >= quantite_demande:
             self.record_sale(item, stock, fact_id, prix, quantite_demande)
         else:
@@ -68,7 +68,7 @@ class InventoryManagementSystem:
 
     def record_sale(self, item, stock, fact_id, prix, quantite_demande):
         sale = Vente_back(item[0], stock, fact_id, prix, quantite_demande)
-        print(item[0], stock, fact_id, prix, quantite_demande)
+   
         sale.add_vente(self.db.cursor())
 
     def handle_insufficient_stock(self, item, fact_id, prix, quantite_demande, quantite_dispo):
