@@ -16,10 +16,13 @@ class MenuPrincipaleFrontend:
         self.Curseur=Curseur
         self.fen = Tk()
         self.fen.title("DANIELLO GEST-STOCK")
-        self.fen.geometry("1200x600")
+        self.fen.geometry("1170x600")
         self.fen.resizable(width=True,height=True)
         self.compte=compte
         self.con=con
+        self.fen.minsize(1170,600)
+        self.fen.maxsize(1170,600)
+
         #les instances de la classe
         #Selection de l'annee active
 
