@@ -21,7 +21,6 @@ class Connexion:
             self.curseur=None
             showerror("Erreur",f'Erreur de connexion à la base de données motif:{e}')
             
-            
     def login(self):
         try:
             if self.db.is_connected():

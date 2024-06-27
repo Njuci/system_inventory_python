@@ -13,9 +13,9 @@ class MenuPrincipaleFrontend:
     def __init__(self,Curseur,con,compte):
         self.Curseur=Curseur
         self.fen = Tk()
-        self.fen.title("DANIELLO GEST-STOCK")
+        self.fen.title("DANIELLO GEST-VENTE&STOCK")
         self.fen.geometry("1200x600")
-        #self.fen.iconbitmap("iconnegest.ico")
+        #self.fen.iconbitmap("danIcon.ico")
         self.fen.resizable(width=True,height=True)
         self.compte=compte
         self.con=con
@@ -30,7 +30,7 @@ class MenuPrincipaleFrontend:
         self.MenuContainer.place(relx=0.0,rely=0.0,relwidth=1, height=120)
         self.ButtonContaineur=Frame( self.MenuContainer,bg='white')
         self.ButtonContaineur.place(relx=0.05,y=50,relwidth=0.90, height=50)
-        self.titre = Label(self.MenuContainer, text = "BIENVENUE DANS DANIELLO GEST-STOCK", font =('Segoe UI bold',15),bg='white',fg='black').place(relx=0.1,y=4,relwidth=0.8,relheight=0.2)
+        self.titre = Label(self.MenuContainer, text = "BIENVENUE DANS DANIELLO GEST-VENTE&STOCK", font =('Segoe UI bold',15),bg='white',fg='black').place(relx=0.1,y=4,relwidth=0.8,relheight=0.2)
 
 
 

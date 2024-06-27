@@ -160,11 +160,23 @@ class GestionArticle :
         self.PrixEntry=Entry(self.paddingEntry,relief='flat', font =('Segoe UI',10),bg='#ebf4f5')
         self.PrixEntry.place(relx=0.02,rely=0.02,relwidth=0.96, height=26)
 
-
-
         #Buttons Actions
         self.bouton_enregistrerPrix= Button(self.ClientForm,bg='white',text='Valider',relief='groove', font =('Segoe UI',9),fg='#416b70',command=lambda:AjoutPrix())
         self.bouton_enregistrerPrix.place(relx=0.2,rely=0.8,relwidth=0.5, height=30)
+
+        self.product=Product_back('')
+        self.listeArticles=self.product.get_all_produit(self.curseur)[1]
+        self.AllArticles={}
+        self.ComboArticles=[]
+        if len(self.listeArticles)!=0:
+            for i in (self.listeArticles):
+                self.AllArticles[''+i[1]]=i[0]
+                self.ComboArticles.append(i[1])
+
+        self.ComboArticle=ttk.Combobox(self.fen,values=self.ComboArticles)
+        self.ComboArticle.place(relx=0.02,rely=0.55,width=280, height=26)
+        self.ComboArticle.bind("<KeyRelease>",self.on_changeArticle)
+       
 
         def AjoutPrix():
             # Vérification des champs saisis
@@ -183,7 +195,6 @@ class GestionArticle :
             if self.NomArticleEntry.get()!="":
                 if  self.verification.Verification(self.NomArticleEntry.get())==False :
                     product=Product_back(self.NomArticleEntry.get())
-                   
                    
                     if product.add_produit(self.curseur):
                         showinfo('Ajout','Article ajouté avec succès'
@@ -335,6 +346,7 @@ class GestionArticle :
             def HandleUpdateArticle(nom):
                 self.id_art=nom
                 self.FormulaireArticle(nom[0])
+                
             
 
     #Details stock 

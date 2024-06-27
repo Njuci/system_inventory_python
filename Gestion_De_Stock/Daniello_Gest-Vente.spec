@@ -2,10 +2,10 @@
 
 
 a = Analysis(
-    ['main.py'],
+    ['Daniello_Gest-Vente.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('danIcon.ico', '.')],
     hiddenimports=['pickle'],
     hookspath=[],
     hooksconfig={},
@@ -22,7 +22,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='main',
+    name='Daniello_Gest-Vente',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -35,5 +35,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['iconnegest.ico'],
+    icon=['danIcon.ico'],
 )

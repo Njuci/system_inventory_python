@@ -293,16 +293,15 @@ class GestionVente :
 
     def ActualiserDetails(self):
         if len(self.ArticleSupprimer)==0 :
-            self.NomCli = Label(self.VenteForm, text="0",font =('Segoe UI bold',10),fg='red',bg='white')
+            self.NomCli = Label(self.VenteForm, text="0 $",font =('Segoe UI bold',10),fg='red',bg='white')
             self.NomCli.place(relx=0.35,rely=0.32)
         else:
             # calcul de somme total deja supprimee
             total=0
             for item in self.ArticleSupprimer:
                 total+=item
-            self.NomCli = Label(self.VenteForm, text=total,font =('Segoe UI bold',10),fg='red',bg='white')
+            self.NomCli = Label(self.VenteForm, text=f"{total} $",font =('Segoe UI bold',10),fg='red',bg='white')
             self.NomCli.place(relx=0.35,rely=0.32)
-
         if len(self.listeArticleFacture)!=0:
 
             self.Articles=Frame(self.FrameFacture,bg='white')
@@ -357,14 +356,14 @@ class GestionVente :
                     self.nomArt=Label(self.label,font =('Segoe UI',10),bg='white',text=item[3])
                     self.nomArt.place(relx=0.37,rely=0.0,relwidth=0.16, relheight=0.7)
 
-                    self.Qnt=Label(self.label,font =('Segoe UI',10),bg='white',text=item[2])
+                    self.Qnt=Label(self.label,font =('Segoe UI',10),bg='white',text=f"{item[2]}$")
                     self.Qnt.place(relx=0.54,rely=0.0,relwidth=0.16, relheight=0.7)
-                    self.Prix=Label(self.label,font =('Segoe UI',10),bg='white',text=item[4])
+                    self.Prix=Label(self.label,font =('Segoe UI',10),bg='white',text=f"{item[4]} $")
                     self.Prix.place(relx=0.71,rely=0.0,relwidth=0.16, relheight=0.7)
 
                     self.Sup=Label(self.label,font =('Segoe UI',10),text="Sup",bg='#961919',fg="white")
                     self.Sup.place(relx=0.89,rely=0.0,relwidth=0.1, relheight=0.7)
-                    self.Sup.bind('<Double-Button-1>', lambda event,ide=index,tot=item[4]: self.SupprimerProduits(ide,tot))
+                    self.Sup.bind('<Button-1>', lambda event,ide=index,tot=item[4]: self.SupprimerProduits(ide,tot))
 
                     self.ligne=Frame(self.label,bg='#d6d4d4',height=-20).place(x=0, rely=0.9,relwidth=1)
                     self.incr+=0.2
@@ -383,14 +382,14 @@ class GestionVente :
                     self.nomArt=Label(self.label,font =('Segoe UI',10),bg='white',text=item[3])
                     self.nomArt.place(relx=0.37,rely=0.0,relwidth=0.16, relheight=0.7)
 
-                    self.Qnt=Label(self.label,font =('Segoe UI',10),bg='white',text=item[2])
+                    self.Qnt=Label(self.label,font =('Segoe UI',10),bg='white',text=f"{item[2]}$")
                     self.Qnt.place(relx=0.54,rely=0.0,relwidth=0.16, relheight=0.7)
-                    self.Prix=Label(self.label,font =('Segoe UI',10),bg='white',text=item[4])
+                    self.Prix=Label(self.label,font =('Segoe UI',10),bg='white',text=f"{item[4]}$")
                     self.Prix.place(relx=0.71,rely=0.0,relwidth=0.16, relheight=0.7)
 
                     self.Sup=Label(self.label,font =('Segoe UI',10),text="Sup",bg='#961919',fg="white")
                     self.Sup.place(relx=0.89,rely=0.0,relwidth=0.1, relheight=0.7)
-                    self.Sup.bind('<Double-Button-1>', lambda event,ide=index,tot=item[4]: self.SupprimerProduits(ide,tot))
+                    self.Sup.bind('<Button-1>', lambda event,ide=index,tot=item[4]: self.SupprimerProduits(ide,tot))
 
 
                     self.ligne=Frame(self.label,bg='#d6d4d4',height=-20).place(x=0, rely=0.9,relwidth=1)
@@ -445,7 +444,7 @@ class GestionVente :
         self.SearchClient = Label(self.VenteForm, text='Montan total',font =('Segoe UI',10),fg='black',bg='white')
         self.SearchClient.place(relx=0.02,rely=0.25)
 
-        self.NomCli = Label(self.VenteForm, text=self.infos_detail_facture['total'],font =('Segoe UI bold',14),fg='black',bg='white')
+        self.NomCli = Label(self.VenteForm, text=f'{self.infos_detail_facture['total']} $',font =('Segoe UI bold',14),fg='black',bg='white')
         self.NomCli.place(relx=0.3,rely=0.25)
 
         self.SearchClient = Label(self.VenteForm, text='Total Produit(s) Suprimé ',font =('Segoe UI',10),fg='black',bg='white')
@@ -531,7 +530,7 @@ class GestionVente :
          
             if total==None:
                 total=0.0
-            self.LabelTotal=Label(self.RightContener,text=str(total),font =('Segoe UI bold',12),bg='#ebf4f5')
+            self.LabelTotal=Label(self.RightContener,text=str(total)+"$",font =('Segoe UI bold',12),bg='#ebf4f5')
             self.LabelTotal.place(relx=0.2,rely=0.02,relwidth=0.2)
         else:
                 
@@ -540,7 +539,7 @@ class GestionVente :
             total=fact.get_total_all_fact(self.curseur)[1][0][0]
             if total==None:
                 total=0.0
-            self.LabelTotal=Label(self.RightContener,text=str(total),font =('Segoe UI bold',12),bg='#ebf4f5')
+            self.LabelTotal=Label(self.RightContener,text=str(total)+"$",font =('Segoe UI bold',12),bg='#ebf4f5')
             self.LabelTotal.place(relx=0.2,rely=0.02,relwidth=0.2)
         t=0.1
         a=1
@@ -574,8 +573,8 @@ class GestionVente :
 
 
                 # A revoir pour la modification
-                self.title2.bind('<Double-Button-1>', lambda article=item[0]: HandleUpdateArticle(item[0]))
-                self.title1.bind('<Double-Button-1>', lambda article=item[0]: HandleUpdateArticle(article))
+                self.title2.bind('<Button-1>', lambda article=item[0]: HandleUpdateArticle(item[0]))
+                self.title1.bind('<Button-1>', lambda article=item[0]: HandleUpdateArticle(article))
 
 
                 self.bouton_Detail= Button(self.label,bg='#ebf4f5',text='Détails',relief='flat', font =('Segoe UI',9),fg='#adabab')
@@ -604,8 +603,8 @@ class GestionVente :
 
 
                 # A revoir pour la modification
-                self.title2.bind('<Double-Button-1>', lambda article=item[0]: HandleUpdateArticle(item[0]))
-                self.title1.bind('<Double-Button-1>', lambda article=item[0]: HandleUpdateArticle(article))
+                self.title2.bind('<Button-1>', lambda article=item[0]: HandleUpdateArticle(item[0]))
+                self.title1.bind('<Button-1>', lambda article=item[0]: HandleUpdateArticle(article))
 
 
                 self.bouton_Detail= Button(self.label,bg='#ebf4f5',text='Détails',relief='flat', font =('Segoe UI',9),fg='#adabab')
@@ -769,14 +768,14 @@ class GestionVente :
                 self.nomArt=Label(self.label,font =('Segoe UI',10),bg='white',text=item[2])
                 self.nomArt.place(relx=0.37,rely=0.0,relwidth=0.16, relheight=0.7)
 
-                self.Qnt=Label(self.label,font =('Segoe UI',10),bg='white',text=item[3])
+                self.Qnt=Label(self.label,font =('Segoe UI',10),bg='white',text=f"{item[3]}$")
                 self.Qnt.place(relx=0.54,rely=0.0,relwidth=0.16, relheight=0.7)
-                self.Prix=Label(self.label,font =('Segoe UI',10),bg='white',text=item[4])
+                self.Prix=Label(self.label,font =('Segoe UI',10),bg='white',text=f"{item[4]} $")
                 self.Prix.place(relx=0.71,rely=0.0,relwidth=0.16, relheight=0.7)
 
                 self.Sup=Label(self.label,font =('Segoe UI',10),text="SUP",bg='red',fg="white")
                 self.Sup.place(relx=0.89,rely=0.0,relwidth=0.1, relheight=0.7)
-                self.Sup.bind('<Double-Button-1>', lambda event,ide=index,tot=item[3]*item[4]: self.SupprimerproduitSurDetails(ide,tot))
+                self.Sup.bind('<Button-1>', lambda event,ide=index,tot=item[3]*item[4]: self.SupprimerproduitSurDetails(ide,tot))
 
                 self.ligne=Frame(self.label,bg='#d6d4d4',height=-20).place(x=0, rely=0.9,relwidth=1)
                 self.incr+=0.2
@@ -795,14 +794,14 @@ class GestionVente :
                 self.nomArt=Label(self.label,font =('Segoe UI',10),bg='white',text=item[2])
                 self.nomArt.place(relx=0.37,rely=0.0,relwidth=0.16, relheight=0.7)
 
-                self.Qnt=Label(self.label,font =('Segoe UI',10),bg='white',text=item[3])
+                self.Qnt=Label(self.label,font =('Segoe UI',10),bg='white',text=f"{item[3]}$")
                 self.Qnt.place(relx=0.54,rely=0.0,relwidth=0.16, relheight=0.7)
-                self.Prix=Label(self.label,font =('Segoe UI',10),bg='white',text=item[4])
+                self.Prix=Label(self.label,font =('Segoe UI',10),bg='white',text=f"{item[4]} $")
                 self.Prix.place(relx=0.71,rely=0.0,relwidth=0.16, relheight=0.7)
 
                 self.Sup=Label(self.label,font =('Segoe UI',10),text="SUP",bg='red',fg="white")
                 self.Sup.place(relx=0.89,rely=0.0,relwidth=0.1, relheight=0.7)
-                self.Sup.bind('<Double-Button-1>', lambda event,ide=index,tot=item[3]*item[4]: self.SupprimerproduitSurDetails(ide,tot))
+                self.Sup.bind('<Button-1>', lambda event,ide=index,tot=item[3]*item[4]: self.SupprimerproduitSurDetails(ide,tot))
 
 
                 self.ligne=Frame(self.label,bg='#d6d4d4',height=-20).place(x=0, rely=0.9,relwidth=1)
@@ -832,20 +831,22 @@ class GestionVente :
             if self.verification.Verification(self.inputQnt.get()):
                 #voir leprix 
                 price=Prix_vente_back("",0).get_prix_vente(self.curseur,self.AllArticle[self.inputIDPro.get()])
-                
-                h=[self.AllArticle[self.inputIDPro.get()],self.inputIDPro.get(),self.inputQnt.get(),price[1][0][1],int(self.inputQnt.get())*price[1][0][1]]
-                if self.PanierArticle<10:
-                    if any(h[0] == el[0] for el in self.listeArtticle ):
-                        showwarning(n[0],'Vous avez déjà ajouter cet article !!')
-                    else :
-                        self.PanierArticle+=1
-                        self.listeArtticle.append(h)
-                        self.Total_fac()
-                        #effqcer l'article de la liste2
-                        self.actualiser()
-                        self.ViderChamps()
+                if(len(price[1])==0):
+                    showwarning("Daniello_Gest-Vente&Stock","il n'y a pas de prix pour cet article !")
                 else:
-                    showwarning(n[0],'Vous avez déjà atteint 10 articles !!')
+                    h=[self.AllArticle[self.inputIDPro.get()],self.inputIDPro.get(),self.inputQnt.get(),price[1][0][1],int(self.inputQnt.get())*price[1][0][1]]
+                    if self.PanierArticle<10:
+                        if any(h[0] == el[0] for el in self.listeArtticle ):
+                            showwarning(n[0],'Vous avez déjà ajouter cet article !!')
+                        else :
+                            self.PanierArticle+=1
+                            self.listeArtticle.append(h)
+                            self.Total_fac()
+                            #effqcer l'article de la liste2
+                            self.actualiser()
+                            self.ViderChamps()
+                    else:
+                        showwarning(n[0],'Vous avez déjà atteint 10 articles !!')
 
             else :
                 showwarning(n[0],'La quantité doit être un entier')
@@ -916,14 +917,14 @@ class GestionVente :
                    self.inputIDPro.set(filtered_data[0])
     def Total_fac(self):
         if len(self.listeArtticle)==0:
-            self.TitreTotal=Label(self.VenteForm,font =('Segoe UI bold',12),bg='white',text='00 CDF')
+            self.TitreTotal=Label(self.VenteForm,font =('Segoe UI bold',12),bg='white',text='00 $')
             self.TitreTotal.place(relx=0.5,rely=0.8,relwidth=0.6, height=26)
         else:
             total=0
             for i in self.listeArtticle:
                 total+=i[4]
             
-            self.TitreTotal=Label(self.VenteForm,font =('Segoe UI bold',12),bg='white',text= str(total)+' CDF')
+            self.TitreTotal=Label(self.VenteForm,font =('Segoe UI bold',12),bg='white',text= str(total)+'$')
             self.TitreTotal.place(relx=0.5,rely=0.8,relwidth=0.6, height=26)
 
 # 

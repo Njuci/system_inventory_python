@@ -8,8 +8,8 @@ import MenuPrincipale
 class Connexion_Frontend:
     def __init__(self):
         self.fen =tk.Tk()
-        self.fen.title("DANIELLO GEST-STOCK")
-        #self.fen.iconbitmap("iconnegest.ico")
+        self.fen.title("DANIELLO GEST-VENTE&STOCK")
+        #self.fen.iconbitmap("danIcon.ico")
         self.fen.geometry("800x600")
         self.fen.config(bg="#ebf4f5")
         self.fen.resizable(width=True,height=True)
@@ -42,7 +42,7 @@ class Connexion_Frontend:
             self.fen.destroy()
             Dash.fenetre().mainloop()
         else:
-            showerror("Erreur","Nom d'utilisateur ou mot de passe incorrect")
+            showerror("DANIELLO GEST-VENTE&STOCK","Nom d'utilisateur ou mot de passe incorrect")
     
         
     
